@@ -18,11 +18,6 @@ export default function Home() {
       setPrompt(''); // Clear the input after sending
     } catch (err) {
       console.error('Error generating UI:', err);
-      // Additional error logging for debugging
-      if (err instanceof Error) {
-        console.error('Error details:', err.message);
-        console.error('Error stack:', err.stack);
-      }
     }
   };
 
