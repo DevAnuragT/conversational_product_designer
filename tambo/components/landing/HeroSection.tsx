@@ -2,9 +2,9 @@ import React from 'react';
 import { HeroSectionProps } from '@/lib/schemas';
 
 export default function HeroSection({
-  headline,
-  subheadline,
-  ctaText,
+  headline = "Welcome to Our Product",
+  subheadline = "Discover amazing features that will transform your experience",
+  ctaText = "Get Started",
   ctaLink,
   backgroundImage,
 }: HeroSectionProps) {

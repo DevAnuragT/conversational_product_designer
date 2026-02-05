@@ -1,7 +1,18 @@
 import React from 'react';
 import { PricingTableProps } from '@/lib/schemas';
 
-export default function PricingTable({ title, tiers }: PricingTableProps) {
+export default function PricingTable({ title, tiers = [] }: PricingTableProps) {
+  // If no tiers provided, show default
+  const displayTiers = tiers.length > 0 ? tiers : [
+    {
+      name: "Basic Plan",
+      price: "$9",
+      period: "month",
+      features: ["Basic features", "Email support"],
+      highlighted: false,
+      ctaText: "Get Started"
+    }
+  ];
   return (
     <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
       <div className="max-w-7xl mx-auto">
@@ -14,7 +25,7 @@ export default function PricingTable({ title, tiers }: PricingTableProps) {
         )}
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {tiers.map((tier, index) => (
+          {displayTiers.map((tier, index) => (
             <div 
               key={index}
               className={`relative bg-white rounded-2xl shadow-lg p-8 ${
@@ -33,12 +44,12 @@ export default function PricingTable({ title, tiers }: PricingTableProps) {
               
               <div className="text-center mb-8">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  {tier.name}
+                  {tier.name || "Plan"}
                 </h3>
                 
                 <div className="mb-4">
                   <span className="text-4xl font-bold text-gray-900">
-                    {tier.price}
+                    {tier.price || "$0"}
                   </span>
                   {tier.period && (
                     <span className="text-gray-600 ml-1">
@@ -49,7 +60,7 @@ export default function PricingTable({ title, tiers }: PricingTableProps) {
               </div>
               
               <ul className="space-y-4 mb-8">
-                {tier.features.map((feature, featureIndex) => (
+                {(tier.features || ["Feature included"]).map((feature, featureIndex) => (
                   <li key={featureIndex} className="flex items-start">
                     <svg 
                       className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" 

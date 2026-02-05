@@ -27,9 +27,9 @@ const ButtonComponent = ({ button, isPrimary = false }: {
 };
 
 export default function CallToAction({
-  headline,
+  headline = "Ready to Get Started?",
   description,
-  primaryButton,
+  primaryButton = { text: "Get Started" },
   secondaryButton,
   backgroundColor = "primary"
 }: CallToActionProps) {
@@ -60,10 +60,10 @@ export default function CallToAction({
         )}
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <ButtonComponent button={primaryButton} isPrimary={true} />
+          <ButtonComponent button={{ text: primaryButton?.text || "Get Started", link: primaryButton?.link }} isPrimary={true} />
           
           {secondaryButton && (
-            <ButtonComponent button={secondaryButton} isPrimary={false} />
+            <ButtonComponent button={{ text: secondaryButton.text || "Learn More", link: secondaryButton.link }} isPrimary={false} />
           )}
         </div>
       </div>

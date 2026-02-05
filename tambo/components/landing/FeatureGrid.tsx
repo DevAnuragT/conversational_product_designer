@@ -1,7 +1,17 @@
 import React from 'react';
 import { FeatureGridProps } from '@/lib/schemas';
 
-export default function FeatureGrid({ title, features, columns = "3" }: FeatureGridProps) {
+export default function FeatureGrid({ 
+  title, 
+  features = [], 
+  columns = "3" 
+}: FeatureGridProps) {
+  // If no features provided, show default
+  const displayFeatures = features.length > 0 ? features : [
+    { title: "Amazing Feature", description: "This feature will help you achieve your goals", icon: "⭐" },
+    { title: "Great Benefits", description: "Experience the benefits of our solution", icon: "🚀" },
+    { title: "Easy to Use", description: "Simple and intuitive interface", icon: "✨" }
+  ];
   const getGridCols = () => {
     switch (columns) {
       case "2": return "grid-cols-1 md:grid-cols-2";
@@ -23,7 +33,7 @@ export default function FeatureGrid({ title, features, columns = "3" }: FeatureG
         )}
         
         <div className={`grid ${getGridCols()} gap-8`}>
-          {features.map((feature, index) => (
+          {displayFeatures.map((feature, index) => (
             <div 
               key={index}
               className="text-center p-6 rounded-lg hover:shadow-lg transition-shadow duration-200"
@@ -37,11 +47,11 @@ export default function FeatureGrid({ title, features, columns = "3" }: FeatureG
               )}
               
               <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                {feature.title}
+                {feature.title || "Feature Title"}
               </h3>
               
               <p className="text-gray-600 leading-relaxed">
-                {feature.description}
+                {feature.description || "Feature description goes here"}
               </p>
             </div>
           ))}
