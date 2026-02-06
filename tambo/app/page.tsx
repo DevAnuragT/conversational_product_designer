@@ -13,6 +13,9 @@ import { ComponentInstance } from '@/lib/export';
 import { useDesignStore } from '@/store/useDesignStore';
 import { Template } from '@/lib/templates';
 import { componentRegistry } from '@/lib/tambo-config';
+import { getPromptSuggestions } from '@/lib/prompt-suggestions';
+import PromptSuggestionsPanel from '@/components/prompts/PromptSuggestionsPanel';
+import TemplateSelector from '@/components/prompts/TemplateSelector';
 
 export default function Home() {
   const [prompt, setPrompt] = useState('');
@@ -44,6 +47,9 @@ export default function Home() {
 
   // Analyze current prompt
   const analysis = prompt.trim() ? analyzePrompt(prompt) : null;
+  
+  // Get prompt suggestions
+  const suggestions = prompt.trim() ? getPromptSuggestions(prompt) : [];
   
   // Extract components from thread messages and create/update project
   useEffect(() => {
@@ -132,6 +138,20 @@ export default function Home() {
     // Set prompt to template description for context
     setPrompt(`Create a ${template.industry} landing page: ${template.description}`);
   };
+  
+  const handleUsePromptTemplate = (template: string) => {
+    setPrompt(template);
+  };
+  
+  const handleSuggestionClick = (suggestionText: string) => {
+    // Append suggestion to prompt with proper formatting
+    const currentPrompt = prompt.trim();
+    if (currentPrompt) {
+      setPrompt(`${currentPrompt}. ${suggestionText}`);
+    } else {
+      setPrompt(suggestionText);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -175,7 +195,8 @@ export default function Home() {
               <h2 className="text-xl font-semibold text-white">
                 Describe Your Landing Page
               </h2>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
+                <TemplateSelector onSelectTemplate={handleUsePromptTemplate} />
                 <button
                   onClick={() => setShowTemplateGallery(true)}
                   className="text-sm text-purple-400 hover:text-purple-300 underline flex items-center gap-1"
@@ -183,7 +204,7 @@ export default function Home() {
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z" />
                   </svg>
-                  Use Template
+                  Component Templates
                 </button>
                 <button
                   onClick={() => setShowAnalysis(!showAnalysis)}
@@ -278,6 +299,14 @@ export default function Home() {
               className="w-full h-32 sm:h-48 p-4 border border-gray-600 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white bg-gray-700 placeholder-gray-400 text-sm leading-relaxed"
               disabled={isLoading}
             />
+            
+            {/* Prompt Suggestions */}
+            {!showAnalysis && suggestions.length > 0 && (
+              <PromptSuggestionsPanel 
+                suggestions={suggestions}
+                onSuggestionClick={handleSuggestionClick}
+              />
+            )}
 
             {/* Enhancement Controls */}
             <div className="mt-4 p-3 bg-gray-700 rounded-lg border border-gray-600">
