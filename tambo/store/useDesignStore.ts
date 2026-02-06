@@ -62,13 +62,17 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   })),
   
   moveComponent: (from, to) => set((state) => {
+    console.log('moveComponent called:', { from, to, componentsLength: state.components.length });
+    
     if (from === to || from < 0 || to < 0 || from >= state.components.length || to >= state.components.length) {
+      console.log('moveComponent: invalid move, returning state');
       return state;
     }
     
     const updated = [...state.components];
     const [moved] = updated.splice(from, 1);
     updated.splice(to, 0, moved);
+    console.log('moveComponent: moved successfully');
     return { components: updated };
   }),
   

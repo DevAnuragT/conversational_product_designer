@@ -81,7 +81,11 @@ export default function ComponentWrapper({
             
             {!isLast && (
               <button
-                onClick={() => onMoveDown(index)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log('Move down clicked:', { index, isLast });
+                  onMoveDown(index);
+                }}
                 className="px-2 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors"
                 title="Move down"
               >
