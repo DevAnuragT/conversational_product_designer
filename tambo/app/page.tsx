@@ -7,15 +7,19 @@ import ExportModal from '@/components/export/ExportModal';
 import ComponentWrapper from '@/components/editor/ComponentWrapper';
 import EditModal from '@/components/editor/EditModal';
 import ProjectsSidebar from '@/components/projects/ProjectsSidebar';
+import TemplateGallery from '@/components/templates/TemplateGallery';
 import { enhancePrompt, analyzePrompt, getExamplePrompt } from '@/lib/prompt-enhancer';
 import { ComponentInstance } from '@/lib/export';
 import { useDesignStore } from '@/store/useDesignStore';
+import { Template } from '@/lib/templates';
+import { componentRegistry } from '@/lib/tambo-config';
 
 export default function Home() {
   const [prompt, setPrompt] = useState('');
   const [enhancePrompts, setEnhancePrompts] = useState(true);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
+  const [showTemplateGallery, setShowTemplateGallery] = useState(false);
   const { sendThreadMessage, generationStage, isIdle, thread } = useTamboThread();
   
   const {
@@ -110,6 +114,24 @@ export default function Home() {
       handleGenerate();
     }
   };
+  
+  const handleSelectTemplate = (template: Template) => {
+    // Convert template components to ComponentInstance format
+    const templateComponents: ComponentInstance[] = template.components.map((comp, index) => ({
+      id: `temp-${Date.now()}-${index}`,
+      name: comp.type,
+      props: comp.props,
+    }));
+    
+    // Set components directly from template
+    setComponents(templateComponents);
+    
+    // Create new project with template
+    createNewProject(`${template.name} Template`);
+    
+    // Set prompt to template description for context
+    setPrompt(`Create a ${template.industry} landing page: ${template.description}`);
+  };
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -153,12 +175,23 @@ export default function Home() {
               <h2 className="text-xl font-semibold text-white">
                 Describe Your Landing Page
               </h2>
-              <button
-                onClick={() => setShowAnalysis(!showAnalysis)}
-                className="text-sm text-blue-400 hover:text-blue-300 underline"
-              >
-                {showAnalysis ? 'Hide Analysis' : 'Show Analysis'}
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowTemplateGallery(true)}
+                  className="text-sm text-purple-400 hover:text-purple-300 underline flex items-center gap-1"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z" />
+                  </svg>
+                  Use Template
+                </button>
+                <button
+                  onClick={() => setShowAnalysis(!showAnalysis)}
+                  className="text-sm text-blue-400 hover:text-blue-300 underline"
+                >
+                  {showAnalysis ? 'Hide Analysis' : 'Show Analysis'}
+                </button>
+              </div>
             </div>
 
             {/* Prompt Analysis */}
@@ -351,10 +384,18 @@ export default function Home() {
               ) : components.length > 0 ? (
                 <div className="bg-white min-h-screen">
                   {components.map((component, index) => {
-                    // Find the corresponding rendered component from thread
+                    // Find the corresponding rendered component from thread OR render from component registry
                     const threadComponents = thread?.messages
                       .filter(m => m.role === 'assistant' && m.renderedComponent) || [];
-                    const renderedComponent = threadComponents[index]?.renderedComponent;
+                    let renderedComponent = threadComponents[index]?.renderedComponent;
+                    
+                    // If no thread component (e.g., from template), render using component registry
+                    if (!renderedComponent) {
+                      const ComponentClass = componentRegistry.find(c => c.name === component.name)?.component;
+                      if (ComponentClass) {
+                        renderedComponent = <ComponentClass {...component.props} />;
+                      }
+                    }
                     
                     return (
                       <ComponentWrapper
@@ -405,6 +446,13 @@ export default function Home() {
         onClose={() => setShowExportModal(false)}
         components={components}
         projectName={prompt.slice(0, 50) || 'landing-page'}
+      />
+      
+      {/* Template Gallery */}
+      <TemplateGallery
+        isOpen={showTemplateGallery}
+        onClose={() => setShowTemplateGallery(false)}
+        onSelectTemplate={handleSelectTemplate}
       />
       
       {/* Edit Modal */}
