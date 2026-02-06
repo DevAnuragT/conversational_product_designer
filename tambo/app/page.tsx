@@ -16,6 +16,8 @@ import { componentRegistry } from '@/lib/tambo-config';
 import { getPromptSuggestions } from '@/lib/prompt-suggestions';
 import PromptSuggestionsPanel from '@/components/prompts/PromptSuggestionsPanel';
 import TemplateSelector from '@/components/prompts/TemplateSelector';
+import VariationSelector from '@/components/variations/VariationSelector';
+import { ComponentVariation } from '@/lib/variations';
 
 export default function Home() {
   const [prompt, setPrompt] = useState('');
@@ -23,6 +25,8 @@ export default function Home() {
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [showTemplateGallery, setShowTemplateGallery] = useState(false);
+  const [showVariationSelector, setShowVariationSelector] = useState(false);
+  const [variationComponentIndex, setVariationComponentIndex] = useState<number | null>(null);
   const { sendThreadMessage, generationStage, isIdle, thread } = useTamboThread();
   
   const {
@@ -150,6 +154,17 @@ export default function Home() {
       setPrompt(`${currentPrompt}. ${suggestionText}`);
     } else {
       setPrompt(suggestionText);
+    }
+  };
+  
+  const handleShowVariations = (index: number) => {
+    setVariationComponentIndex(index);
+    setShowVariationSelector(true);
+  };
+  
+  const handleSelectVariation = (variation: ComponentVariation) => {
+    if (variationComponentIndex !== null) {
+      updateComponent(variationComponentIndex, variation.props);
     }
   };
 
@@ -435,6 +450,7 @@ export default function Home() {
                         onDelete={deleteComponent}
                         onMoveUp={(i) => moveComponent(i, i - 1)}
                         onMoveDown={(i) => moveComponent(i, i + 1)}
+                        onVariations={handleShowVariations}
                         isFirst={index === 0}
                         isLast={index === components.length - 1}
                       >
@@ -493,6 +509,18 @@ export default function Home() {
             stopEditing();
           }}
           onCancel={stopEditing}
+        />
+      )}
+      
+      {/* Variation Selector */}
+      {showVariationSelector && variationComponentIndex !== null && components[variationComponentIndex] && (
+        <VariationSelector
+          component={components[variationComponentIndex]}
+          onSelectVariation={handleSelectVariation}
+          onClose={() => {
+            setShowVariationSelector(false);
+            setVariationComponentIndex(null);
+          }}
         />
       )}
     </div>
