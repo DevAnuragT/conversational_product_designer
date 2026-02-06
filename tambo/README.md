@@ -9,7 +9,10 @@ This application demonstrates how to build a conversational interface for genera
 ## Features
 
 - **Natural Language Interface**: Describe your landing page in plain English
+- **AI Prompt Enhancement**: Automatically improves prompts for better results
+- **App UI Detection**: Smart detection warns when users request app interfaces instead of landing pages
 - **Real-time Generation**: See your landing page generated instantly
+- **Prompt Quality Analysis**: Get feedback on your prompt completeness
 - **Professional Components**: Four polished, responsive React components
 - **Type Safety**: Full TypeScript support with Zod schema validation
 - **Responsive Design**: Mobile-first design with Tailwind CSS
@@ -151,6 +154,20 @@ Try these example prompts to generate different types of landing pages:
 - Include details about the number of features or pricing tiers
 - Specify the tone (professional, friendly, modern, etc.)
 - Mention any specific content themes or industries
+
+**Pro Tip**: Enable "Auto-enhance prompts" to automatically improve your prompts with best practices and component suggestions. The system will analyze your prompt quality and provide suggestions for better results.
+
+### Prompt Enhancement Features
+
+The application includes intelligent prompt enhancement that:
+
+- **Analyzes prompt quality** with a scoring system (0-100%)
+- **Suggests missing elements** like hero sections, features, pricing, or CTAs
+- **Auto-enhances short prompts** with component suggestions and best practices
+- **Provides example prompts** for inspiration
+- **Shows real-time feedback** on prompt completeness
+
+You can toggle prompt enhancement on/off and view detailed analysis of your prompts.
 
 ## Development
 

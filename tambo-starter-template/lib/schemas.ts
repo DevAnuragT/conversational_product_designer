@@ -1,28 +1,34 @@
 import { z } from 'zod';
 
-// Hero Section Schema - ultra-relaxed validation for AI compatibility
+// Hero Section Schema - with style props for design variety
 export const heroSectionSchema = z.object({
-  headline: z.string().optional().default("Welcome to Our Product"),
-  subheadline: z.string().optional().default("Discover amazing features that will transform your experience"),
-  ctaText: z.string().optional().default("Get Started"),
+  headline: z.string().optional(),
+  subheadline: z.string().optional(),
+  ctaText: z.string().optional(),
   ctaLink: z.string().optional(),
   backgroundImage: z.string().optional(),
+  // NEW: Style props for design variety
+  colorScheme: z.string().optional(),
+  layout: z.string().optional(),
 });
 
 export type HeroSectionProps = z.infer<typeof heroSectionSchema>;
 
 // Feature Schema
 export const featureSchema = z.object({
-  title: z.string().optional().default("Feature Title"),
-  description: z.string().optional().default("Feature description goes here"),
+  title: z.string().optional(),
+  description: z.string().optional(),
   icon: z.string().optional(),
 });
 
-// Feature Grid Schema
+// Feature Grid Schema - with style props
 export const featureGridSchema = z.object({
   title: z.string().optional(),
-  features: z.array(featureSchema).optional().default([]),
-  columns: z.enum(["2", "3", "4"]).optional().default("3"),
+  features: z.array(featureSchema).optional(),
+  columns: z.string().optional(),
+  // NEW: Style props for design variety
+  colorScheme: z.string().optional(),
+  style: z.string().optional(),
 });
 
 export type Feature = z.infer<typeof featureSchema>;
@@ -30,36 +36,41 @@ export type FeatureGridProps = z.infer<typeof featureGridSchema>;
 
 // Pricing Tier Schema
 export const pricingTierSchema = z.object({
-  name: z.string().optional().default("Plan"),
-  price: z.string().optional().default("$0"),
+  name: z.string().optional(),
+  price: z.string().optional(),
   period: z.string().optional(),
-  features: z.array(z.string()).optional().default([]),
-  highlighted: z.boolean().optional().default(false),
-  ctaText: z.string().optional().default("Get Started"),
+  features: z.array(z.string()).optional(),
+  highlighted: z.boolean().optional(),
+  ctaText: z.string().optional(),
 });
 
-// Pricing Table Schema
+// Pricing Table Schema - with style props
 export const pricingTableSchema = z.object({
   title: z.string().optional(),
-  tiers: z.array(pricingTierSchema).optional().default([]),
+  tiers: z.array(pricingTierSchema).optional(),
+  // NEW: Style props for design variety
+  colorScheme: z.string().optional(),
+  layout: z.string().optional(),
 });
 
 export type PricingTier = z.infer<typeof pricingTierSchema>;
 export type PricingTableProps = z.infer<typeof pricingTableSchema>;
 
-// Call to Action Schema
+// Call to Action Schema - with style props
 export const callToActionSchema = z.object({
-  headline: z.string().optional().default("Ready to Get Started?"),
+  headline: z.string().optional(),
   description: z.string().optional(),
   primaryButton: z.object({
-    text: z.string().optional().default("Get Started"),
-    link: z.string().optional(),
-  }).optional().default({}),
-  secondaryButton: z.object({
-    text: z.string().optional().default("Learn More"),
+    text: z.string().optional(),
     link: z.string().optional(),
   }).optional(),
-  backgroundColor: z.enum(["primary", "secondary", "accent"]).optional().default("primary"),
+  secondaryButton: z.object({
+    text: z.string().optional(),
+    link: z.string().optional(),
+  }).optional(),
+  // NEW: Style props for design variety
+  colorScheme: z.string().optional(),
+  layout: z.string().optional(),
 });
 
 export type CallToActionProps = z.infer<typeof callToActionSchema>;

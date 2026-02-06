@@ -59,9 +59,9 @@ export default function Home() {
           .filter(message => message.role === 'assistant' && message.renderedComponent)
           .map((message, index) => ({
             id: `comp-${Date.now()}-${index}`,
-            name: message.componentName || 'Component',
-            props: message.componentProps || {},
-            schema: message.componentSchema,
+            name: (message as any).componentName || 'Component',
+            props: (message as any).componentProps || {},
+            schema: (message as any).componentSchema,
           }));
         
         if (componentsFromThread.length > 0) {

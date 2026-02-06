@@ -1,77 +1,70 @@
-# Conversational UI Starter Template
+# Conversational Product Designer with Tambo AI
 
-A Next.js starter template for building conversational interfaces with Tambo AI's generative UI capabilities. Generate professional landing pages from natural language prompts using pre-built React components.
+A Next.js application that generates professional landing pages from natural language prompts using Tambo AI's generative UI capabilities.
 
-## 🚀 What You'll Build
+## Overview
 
-This template demonstrates how to create a conversational interface that:
-- Takes natural language prompts from users
-- Uses Tambo AI to compose UI components intelligently
-- Renders professional, responsive landing pages instantly
-- Includes four production-ready components: Hero, Features, Pricing, and Call-to-Action
+This application demonstrates how to build a conversational interface for generating landing pages. Users can describe their desired landing page in natural language, and the AI will compose it using four predefined React components: HeroSection, FeatureGrid, PricingTable, and CallToAction.
 
-## ✨ Features
+## Features
 
-- **🎯 Complete Generative UI Workflow**: Prompt → AI → Components → Preview
-- **🧩 Four Professional Components**: Hero sections, feature grids, pricing tables, and CTAs
-- **🔒 Type Safety**: Full TypeScript support with Zod schema validation
-- **🎨 Beautiful Design**: Responsive components styled with Tailwind CSS
-- **📱 Mobile-First**: All components work perfectly on any device
-- **⚡ Fast Setup**: Get running in under 5 minutes
+- **Natural Language Interface**: Describe your landing page in plain English
+- **AI Prompt Enhancement**: Automatically improves prompts for better results
+- **App UI Detection**: Smart detection warns when users request app interfaces instead of landing pages
+- **Real-time Generation**: See your landing page generated instantly
+- **Prompt Quality Analysis**: Get feedback on your prompt completeness
+- **Professional Components**: Four polished, responsive React components
+- **Type Safety**: Full TypeScript support with Zod schema validation
+- **Responsive Design**: Mobile-first design with Tailwind CSS
+- **Export Ready**: Stub implementation for future code export functionality
 
-## 🏗️ Template Structure
-
-```
-├── app/
-│   ├── layout.tsx          # Root layout with Tambo provider
-│   ├── page.tsx            # Main conversational interface
-│   └── globals.css         # Global styles
-├── components/
-│   ├── landing/            # Four landing page components
-│   │   ├── HeroSection.tsx
-│   │   ├── FeatureGrid.tsx
-│   │   ├── PricingTable.tsx
-│   │   └── CallToAction.tsx
-│   └── providers/
-│       └── TamboProvider.tsx
-├── lib/
-│   ├── schemas.ts          # Zod schemas for type safety
-│   └── tambo-config.ts     # Component registry
-└── types/
-    └── index.ts            # TypeScript definitions
-```
-
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
-- Node.js 18+
-- A Tambo AI API key ([Get one here](https://tambo.co))
+- Node.js 18+ 
+- npm or yarn
+- Tambo AI API key
 
-### 1. Clone and Install
+### Installation
 
+1. Clone the repository:
 ```bash
-# Clone this template
-git clone <your-repo-url>
-cd conversational-ui-starter
+git clone <repository-url>
+cd tambo
+```
 
-# Install dependencies
+2. Install dependencies:
+```bash
 npm install
 ```
 
-### 2. Configure Tambo AI
-
+3. Set up environment variables:
 ```bash
-# Copy environment template
 cp .env.example .env.local
-
-# Add your Tambo API key
-echo "NEXT_PUBLIC_TAMBO_API_KEY=your_api_key_here" >> .env.local
 ```
 
-### 3. Set Up System Prompt
+4. Add your Tambo AI API key to `.env.local`:
+```bash
+NEXT_PUBLIC_TAMBO_API_KEY=your_tambo_api_key_here
+```
 
-In your [Tambo dashboard](https://tambo.co), configure your project with this system prompt:
+5. Configure your Tambo project with the system prompt (see Configuration section below)
+
+6. Start the development server:
+```bash
+npm run dev
+```
+
+7. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+## Configuration
+
+### Tambo AI Setup
+
+1. Create a project at [tambo.co](https://tambo.co)
+2. Get your API key from the project settings
+3. Configure the system prompt in your Tambo project dashboard with:
 
 ```
 You are a UI composer for landing pages. You have access to exactly four components:
@@ -97,109 +90,173 @@ When composing landing pages:
 - End with CallToAction for conversion focus
 ```
 
-### 4. Run the Development Server
+## Architecture
 
-```bash
-npm run dev
+### Component Registry
+
+The application registers four React components with Tambo AI:
+
+- **HeroSection**: Primary landing page hero with headline, subheadline, and CTA
+- **FeatureGrid**: Grid layout displaying multiple features with icons and descriptions  
+- **PricingTable**: Comparative pricing display with multiple tiers and features
+- **CallToAction**: Conversion-focused section with primary and secondary actions
+
+### Technology Stack
+
+- **Next.js 14+**: React framework with App Router
+- **TypeScript**: Type safety and developer experience
+- **Tailwind CSS**: Utility-first CSS framework
+- **Tambo AI**: Generative UI SDK for React
+- **Zod**: Schema validation for component props
+
+### Project Structure
+
+```
+src/
+├── app/
+│   ├── layout.tsx          # Root layout with providers
+│   ├── page.tsx            # Main application page
+│   └── globals.css         # Global styles
+├── components/
+│   ├── landing/            # Landing page components
+│   │   ├── HeroSection.tsx
+│   │   ├── FeatureGrid.tsx
+│   │   ├── PricingTable.tsx
+│   │   └── CallToAction.tsx
+│   └── providers/
+│       └── TamboProvider.tsx
+├── lib/
+│   ├── schemas.ts          # Zod schemas for components
+│   └── tambo-config.ts     # Tambo configuration
+└── types/
+    └── index.ts            # TypeScript type definitions
 ```
 
-Open [http://localhost:3000](http://localhost:3000) and start generating landing pages!
+## Usage
 
-## 🎯 Example Prompts
+### Example Prompts
 
-Try these prompts to see the template in action:
+Try these example prompts to generate different types of landing pages:
 
-### SaaS Product
-```
-Create a landing page for TaskFlow, a productivity SaaS app that helps teams manage projects better. Include a hero section with a compelling headline, a feature grid showing 3 key benefits (collaboration, automation, and analytics), and a call-to-action section encouraging users to start their free trial.
-```
+1. **SaaS Product**:
+   "Create a landing page for a productivity SaaS app with a hero section, feature grid showing 3 key benefits, pricing table with 3 tiers, and a call-to-action section."
 
-### E-commerce
-```
-Build a landing page for "EcoWear", a sustainable clothing brand. Start with a hero section about eco-friendly fashion, add a feature grid highlighting sustainability, quality, and style, include a pricing table with 3 product tiers (Basic, Premium, Luxury), and end with a strong call-to-action.
-```
+2. **E-commerce**:
+   "Build a landing page for an online store with a compelling hero, features highlighting fast shipping and quality products, and a strong call-to-action."
 
-### Service Business
-```
-Generate a landing page for "Digital Marketing Pro", a consulting agency. Create a professional hero section, feature grid with 4 services (SEO, PPC, Social Media, Content Marketing), pricing packages for different business sizes, and a consultation call-to-action.
-```
+3. **Service Business**:
+   "Generate a landing page for a consulting service with a professional hero section, grid of 4 service offerings, pricing packages, and contact call-to-action."
 
-## 🧩 Components Overview
+### Tips for Effective Prompts
 
-### HeroSection
-Primary landing page hero with headline, subheadline, and call-to-action button. Supports optional background images and custom styling.
+- Be specific about the type of business or product
+- Mention which components you want (hero, features, pricing, CTA)
+- Include details about the number of features or pricing tiers
+- Specify the tone (professional, friendly, modern, etc.)
+- Mention any specific content themes or industries
 
-### FeatureGrid
-Responsive grid layout for showcasing features. Supports 2-4 columns, optional icons, and automatic mobile adaptation.
+**Pro Tip**: Enable "Auto-enhance prompts" to automatically improve your prompts with best practices and component suggestions. The system will analyze your prompt quality and provide suggestions for better results.
 
-### PricingTable
-Professional pricing comparison table with tier highlighting, feature lists, and customizable CTAs for each pricing option.
+### Prompt Enhancement Features
 
-### CallToAction
-Conversion-focused section with primary and optional secondary action buttons. Multiple background color themes available.
+The application includes intelligent prompt enhancement that:
 
-## 🔧 Customization
+- **Analyzes prompt quality** with a scoring system (0-100%)
+- **Suggests missing elements** like hero sections, features, pricing, or CTAs
+- **Auto-enhances short prompts** with component suggestions and best practices
+- **Provides example prompts** for inspiration
+- **Shows real-time feedback** on prompt completeness
+
+You can toggle prompt enhancement on/off and view detailed analysis of your prompts.
+
+## Development
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
 
 ### Adding New Components
 
-1. Create your component in `components/landing/`
+To add a new component to the registry:
+
+1. Create the component in `components/landing/`
 2. Define the Zod schema in `lib/schemas.ts`
-3. Register it in `lib/tambo-config.ts`
+3. Add the component to the registry in `lib/tambo-config.ts`
 4. Update the system prompt to include the new component
 
-### Styling
+### Customizing Styles
 
-The template uses Tailwind CSS. Customize:
+The application uses Tailwind CSS. You can customize:
+
 - Colors and themes in `tailwind.config.js`
 - Global styles in `app/globals.css`
-- Component-specific styles in individual files
+- Component-specific styles in individual component files
 
-### Type Safety
-
-All components use Zod schemas for runtime validation:
-- Props are validated before rendering
-- AI responses are checked against schemas
-- TypeScript provides compile-time safety
-
-## 📚 Learning Resources
-
-- [Tambo AI Documentation](https://docs.tambo.co)
-- [Next.js App Router Guide](https://nextjs.org/docs/app)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [Zod Schema Validation](https://zod.dev)
-
-## 🚀 Deployment
+## Deployment
 
 ### Vercel (Recommended)
 
 1. Push your code to GitHub
-2. Connect to Vercel
-3. Add `NEXT_PUBLIC_TAMBO_API_KEY` environment variable
-4. Deploy!
+2. Connect your repository to Vercel
+3. Add your `NEXT_PUBLIC_TAMBO_API_KEY` environment variable
+4. Deploy
 
 ### Other Platforms
 
-Works on any platform supporting Next.js:
+The application can be deployed to any platform that supports Next.js:
+
 - Netlify
-- Railway  
+- Railway
 - AWS Amplify
 - DigitalOcean App Platform
 
-## 🤝 Contributing
+Make sure to set the `NEXT_PUBLIC_TAMBO_API_KEY` environment variable.
 
-Found a bug or want to improve the template? Contributions welcome!
+## Troubleshooting
+
+### Common Issues
+
+**Build Errors**
+- Ensure all dependencies are installed: `npm install`
+- Check TypeScript errors: `npm run build`
+- Verify environment variables are set correctly
+
+**API Key Issues**
+- Verify your Tambo API key is correct
+- Check that the key is set in `.env.local`
+- Ensure the key starts with `NEXT_PUBLIC_`
+
+**Component Not Rendering**
+- Check browser console for errors
+- Verify component is registered in `lib/tambo-config.ts`
+- Ensure Zod schema matches component props
+
+**Generation Failures**
+- Check your Tambo project system prompt configuration
+- Verify your API key has sufficient credits
+- Try simpler prompts to test basic functionality
+
+### Getting Help
+
+- Check the [Tambo AI Documentation](https://docs.tambo.co)
+- Review the component schemas in `lib/schemas.ts`
+- Look at example prompts in this README
+
+## License
+
+MIT License - see LICENSE file for details.
+
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Submit a pull request
-
-## 📄 License
-
-MIT License - feel free to use this template for any project!
+4. Add tests if applicable
+5. Submit a pull request
 
 ---
 
-**Built with ❤️ using [Tambo AI](https://tambo.co) and [Next.js](https://nextjs.org)**
-
-*This template demonstrates the power of conversational interfaces for UI generation. Start building your own generative UI applications today!*
+Built with ❤️ using [Tambo AI](https://tambo.co) and [Next.js](https://nextjs.org)
