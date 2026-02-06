@@ -4,16 +4,30 @@ import React, { useState, useEffect } from 'react';
 import { useTamboThread } from '@tambo-ai/react';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import ExportModal from '@/components/export/ExportModal';
+import ComponentWrapper from '@/components/editor/ComponentWrapper';
+import EditModal from '@/components/editor/EditModal';
 import { enhancePrompt, analyzePrompt, getExamplePrompt } from '@/lib/prompt-enhancer';
 import { ComponentInstance } from '@/lib/export';
+import { useDesignStore } from '@/store/useDesignStore';
 
 export default function Home() {
   const [prompt, setPrompt] = useState('');
   const [enhancePrompts, setEnhancePrompts] = useState(true);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
-  const [components, setComponents] = useState<ComponentInstance[]>([]);
   const { sendThreadMessage, generationStage, isIdle, thread } = useTamboThread();
+  
+  const {
+    components,
+    setComponents,
+    updateComponent,
+    deleteComponent,
+    moveComponent,
+    isEditing,
+    editingIndex,
+    startEditing,
+    stopEditing,
+  } = useDesignStore();
 
   const isLoading = !isIdle;
   const error = generationStage === 'ERROR' ? 'An error occurred while generating' : null;
@@ -305,22 +319,27 @@ export default function Home() {
                     <p className="text-gray-400">Generating your landing page...</p>
                   </div>
                 </div>
-              ) : thread?.messages && thread.messages.length > 0 ? (
-                (() => {
-                  // Get only the last user message and all assistant messages after it
-                  const userMessages = thread.messages.filter(m => m.role === 'user');
-                  const lastUserMessageIndex = thread.messages.lastIndexOf(userMessages[userMessages.length - 1]);
-                  
-                  // Get all assistant messages after the last user message that have rendered components
-                  const componentsToRender = thread.messages
-                    .slice(lastUserMessageIndex + 1)
-                    .filter(message => message.role === 'assistant' && message.renderedComponent);
-                  
-                  return componentsToRender.length > 0 ? (
-                    <div className="bg-white min-h-screen">
-                      {componentsToRender.map((message, index) => (
+              ) : components.length > 0 ? (
+                <div className="bg-white min-h-screen">
+                  {components.map((component, index) => {
+                    // Find the corresponding rendered component from thread
+                    const threadComponents = thread?.messages
+                      .filter(m => m.role === 'assistant' && m.renderedComponent) || [];
+                    const renderedComponent = threadComponents[index]?.renderedComponent;
+                    
+                    return (
+                      <ComponentWrapper
+                        key={component.id}
+                        component={component}
+                        index={index}
+                        onEdit={startEditing}
+                        onDelete={deleteComponent}
+                        onMoveUp={(i) => moveComponent(i, i - 1)}
+                        onMoveDown={(i) => moveComponent(i, i + 1)}
+                        isFirst={index === 0}
+                        isLast={index === components.length - 1}
+                      >
                         <ErrorBoundary
-                          key={index}
                           fallback={
                             <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg m-4">
                               <p className="text-yellow-800">
@@ -329,12 +348,12 @@ export default function Home() {
                             </div>
                           }
                         >
-                          {message.renderedComponent}
+                          {renderedComponent}
                         </ErrorBoundary>
-                      ))}
-                    </div>
-                  ) : null;
-                })()
+                      </ComponentWrapper>
+                    );
+                  })}
+                </div>
               ) : (
                 <div className="p-6">
                   <div className="text-center text-gray-400 py-12">
@@ -358,6 +377,18 @@ export default function Home() {
         components={components}
         projectName={prompt.slice(0, 50) || 'landing-page'}
       />
+      
+      {/* Edit Modal */}
+      {isEditing && editingIndex !== null && components[editingIndex] && (
+        <EditModal
+          component={components[editingIndex]}
+          onSave={(updatedProps) => {
+            updateComponent(editingIndex, updatedProps);
+            stopEditing();
+          }}
+          onCancel={stopEditing}
+        />
+      )}
     </div>
   );
 }
