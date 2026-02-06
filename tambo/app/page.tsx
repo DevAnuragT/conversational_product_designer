@@ -6,6 +6,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import ExportModal from '@/components/export/ExportModal';
 import ComponentWrapper from '@/components/editor/ComponentWrapper';
 import EditModal from '@/components/editor/EditModal';
+import ProjectsSidebar from '@/components/projects/ProjectsSidebar';
 import { enhancePrompt, analyzePrompt, getExamplePrompt } from '@/lib/prompt-enhancer';
 import { ComponentInstance } from '@/lib/export';
 import { useDesignStore } from '@/store/useDesignStore';
@@ -18,6 +19,7 @@ export default function Home() {
   const { sendThreadMessage, generationStage, isIdle, thread } = useTamboThread();
   
   const {
+    currentProject,
     components,
     setComponents,
     updateComponent,
@@ -27,6 +29,10 @@ export default function Home() {
     editingIndex,
     startEditing,
     stopEditing,
+    saveToStorage,
+    loadFromStorage,
+    createNewProject,
+    clearDesign,
   } = useDesignStore();
 
   const isLoading = !isIdle;
@@ -35,7 +41,7 @@ export default function Home() {
   // Analyze current prompt
   const analysis = prompt.trim() ? analyzePrompt(prompt) : null;
   
-  // Extract components from thread messages
+  // Extract components from thread messages and create/update project
   useEffect(() => {
     if (thread?.messages) {
       const userMessages = thread.messages.filter(m => m.role === 'user');
@@ -56,10 +62,22 @@ export default function Home() {
         
         if (componentsFromThread.length > 0) {
           setComponents(componentsFromThread);
+          
+          // Create new project if none exists
+          if (!currentProject) {
+            createNewProject(prompt);
+          }
         }
       }
     }
   }, [thread]);
+  
+  // Auto-save when components change
+  useEffect(() => {
+    if (components.length > 0 && currentProject) {
+      saveToStorage();
+    }
+  }, [components]);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
@@ -95,6 +113,13 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-900">
+      {/* Projects Sidebar */}
+      <ProjectsSidebar
+        currentProjectId={currentProject?.id}
+        onSelectProject={loadFromStorage}
+        onNewProject={clearDesign}
+      />
+      
       {/* Header */}
       <header className="bg-gray-800 shadow-lg border-b border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -298,9 +323,13 @@ export default function Home() {
               <h2 className="text-lg sm:text-xl font-semibold text-white">
                 Preview
               </h2>
-              {thread?.messages && thread.messages.some(m => m.role === 'assistant' && m.renderedComponent) && !isLoading && (
+              {thread?.messages && thread.messages.some(m => m.role === 'assistant' && m.renderedComponent) && !isLoading && components.length > 0 && (
                 <button
-                  onClick={() => window.location.reload()}
+                  onClick={() => {
+                    if (confirm('Clear current design?')) {
+                      clearDesign();
+                    }
+                  }}
                   className="text-sm text-red-400 hover:text-red-300 underline"
                 >
                   Clear Preview

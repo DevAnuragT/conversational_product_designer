@@ -1,12 +1,14 @@
 /**
- * Design Store - State Management for Component Editing
+ * Design Store - State Management for Component Editing and Projects
  */
 
 import { create } from 'zustand';
 import { ComponentInstance } from '@/lib/export';
+import { Project, storage } from '@/lib/persistence';
 
 interface DesignState {
-  // Current design
+  // Current project
+  currentProject: Project | null;
   components: ComponentInstance[];
   
   // UI state
@@ -14,6 +16,7 @@ interface DesignState {
   editingIndex: number | null;
   
   // Actions
+  setProject: (project: Project) => void;
   setComponents: (components: ComponentInstance[]) => void;
   addComponent: (component: ComponentInstance) => void;
   updateComponent: (index: number, props: any) => void;
@@ -24,12 +27,23 @@ interface DesignState {
   // Editing
   startEditing: (index: number) => void;
   stopEditing: () => void;
+  
+  // Persistence
+  saveToStorage: () => void;
+  loadFromStorage: (id: string) => void;
+  createNewProject: (prompt: string) => void;
 }
 
 export const useDesignStore = create<DesignState>((set, get) => ({
+  currentProject: null,
   components: [],
   isEditing: false,
   editingIndex: null,
+  
+  setProject: (project) => set({ 
+    currentProject: project, 
+    components: project.components 
+  }),
   
   setComponents: (components) => set({ components }),
   
@@ -59,6 +73,7 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   }),
   
   clearDesign: () => set({ 
+    currentProject: null,
     components: [], 
     isEditing: false, 
     editingIndex: null 
@@ -66,4 +81,43 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   
   startEditing: (index) => set({ isEditing: true, editingIndex: index }),
   stopEditing: () => set({ isEditing: false, editingIndex: null }),
+  
+  saveToStorage: () => {
+    const state = get();
+    if (!state.currentProject) return;
+    
+    const project: Project = {
+      ...state.currentProject,
+      components: state.components,
+      updatedAt: Date.now()
+    };
+    
+    storage.saveProject(project);
+    set({ currentProject: project });
+  },
+  
+  loadFromStorage: (id) => {
+    const project = storage.getProject(id);
+    if (project) {
+      set({ 
+        currentProject: project, 
+        components: project.components,
+        isEditing: false,
+        editingIndex: null
+      });
+    }
+  },
+  
+  createNewProject: (prompt) => {
+    const project: Project = {
+      id: storage.generateId(),
+      name: prompt.slice(0, 50) || `Project ${new Date().toLocaleDateString()}`,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      prompt,
+      components: []
+    };
+    
+    set({ currentProject: project, components: [] });
+  },
 }));
