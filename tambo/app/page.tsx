@@ -1,14 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTamboThread } from '@tambo-ai/react';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import ExportModal from '@/components/export/ExportModal';
 import { enhancePrompt, analyzePrompt, getExamplePrompt } from '@/lib/prompt-enhancer';
+import { ComponentInstance } from '@/lib/export';
 
 export default function Home() {
   const [prompt, setPrompt] = useState('');
   const [enhancePrompts, setEnhancePrompts] = useState(true);
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [components, setComponents] = useState<ComponentInstance[]>([]);
   const { sendThreadMessage, generationStage, isIdle, thread } = useTamboThread();
 
   const isLoading = !isIdle;
@@ -16,6 +20,32 @@ export default function Home() {
 
   // Analyze current prompt
   const analysis = prompt.trim() ? analyzePrompt(prompt) : null;
+  
+  // Extract components from thread messages
+  useEffect(() => {
+    if (thread?.messages) {
+      const userMessages = thread.messages.filter(m => m.role === 'user');
+      const lastUserMessageIndex = userMessages.length > 0 
+        ? thread.messages.lastIndexOf(userMessages[userMessages.length - 1])
+        : -1;
+      
+      if (lastUserMessageIndex >= 0) {
+        const componentsFromThread = thread.messages
+          .slice(lastUserMessageIndex + 1)
+          .filter(message => message.role === 'assistant' && message.renderedComponent)
+          .map((message, index) => ({
+            id: `comp-${Date.now()}-${index}`,
+            name: message.componentName || 'Component',
+            props: message.componentProps || {},
+            schema: message.componentSchema,
+          }));
+        
+        if (componentsFromThread.length > 0) {
+          setComponents(componentsFromThread);
+        }
+      }
+    }
+  }, [thread]);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
@@ -62,9 +92,10 @@ export default function Home() {
               <p className="text-gray-400 mt-1">Generate professional landing pages with AI</p>
             </div>
             <button
+              onClick={() => setShowExportModal(true)}
+              disabled={components.length === 0}
               className="inline-flex items-center px-4 py-2 border border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-              disabled
-              title="Coming soon — export the generated UI as reusable React code"
+              title={components.length === 0 ? "Generate a landing page first" : "Export as React or HTML code"}
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -319,6 +350,14 @@ export default function Home() {
           </div>
         </div>
       </div>
+      
+      {/* Export Modal */}
+      <ExportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        components={components}
+        projectName={prompt.slice(0, 50) || 'landing-page'}
+      />
     </div>
   );
 }
