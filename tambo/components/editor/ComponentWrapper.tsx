@@ -69,7 +69,11 @@ export default function ComponentWrapper({
             
             {!isFirst && (
               <button
-                onClick={() => onMoveUp(index)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log('Move up clicked:', { index, isFirst });
+                  onMoveUp(index);
+                }}
                 className="px-2 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors"
                 title="Move up"
               >
