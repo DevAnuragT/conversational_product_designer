@@ -483,26 +483,23 @@ export default function Home() {
               ) : components.length > 0 ? (
                 <div className="bg-white min-h-screen">
                   {components.map((component, index) => {
-                    // Find the corresponding rendered component from thread OR render from component registry
-                    const threadComponents = thread?.messages
-                      .filter(m => m.role === 'assistant' && m.renderedComponent) || [];
-                    let renderedComponent = threadComponents[index]?.renderedComponent;
+                    // ALWAYS render from component registry with current props
+                    // This ensures variations and edits actually update the display
+                    const ComponentClass = componentRegistry.find(c => c.name === component.name)?.component;
                     
-                    // If no thread component (e.g., from template or loaded project), render using component registry
-                    if (!renderedComponent) {
-                      const ComponentClass = componentRegistry.find(c => c.name === component.name)?.component;
-                      if (ComponentClass) {
-                        renderedComponent = <ComponentClass {...component.props} />;
-                      } else {
-                        console.warn('Component not found in registry:', component.name);
-                        renderedComponent = (
-                          <div className="p-6 bg-red-50 border border-red-200 rounded-lg m-4">
-                            <p className="text-red-800">
-                              ⚠️ Component "{component.name}" not found in registry
-                            </p>
-                          </div>
-                        );
-                      }
+                    let renderedComponent;
+                    if (ComponentClass) {
+                      // Render with current props from store
+                      renderedComponent = <ComponentClass {...component.props} />;
+                    } else {
+                      console.warn('Component not found in registry:', component.name);
+                      renderedComponent = (
+                        <div className="p-6 bg-red-50 border border-red-200 rounded-lg m-4">
+                          <p className="text-red-800">
+                            ⚠️ Component "{component.name}" not found in registry
+                          </p>
+                        </div>
+                      );
                     }
                     
                     return (
