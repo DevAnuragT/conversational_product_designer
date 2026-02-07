@@ -158,7 +158,7 @@ export default function PropsEditor({ props, onChange }: PropsEditorProps) {
         />
         {isIconField && (
           <p className="text-xs text-gray-400 mt-1">
-            💡 Common icons: search, tag, package, users, star, heart, check, x, plus, minus, arrow-right, arrow-left
+            💡 Examples: star, rocket, sparkle, chart, analytics, shield, speed, support, dumbbell, utensils
           </p>
         )}
       </div>
