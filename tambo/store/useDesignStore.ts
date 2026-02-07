@@ -52,8 +52,16 @@ export const useDesignStore = create<DesignState>((set, get) => ({
   })),
   
   updateComponent: (index, props) => set((state) => {
+    console.log('=== STORE: UPDATE COMPONENT ===');
+    console.log('Index:', index);
+    console.log('Old props:', JSON.stringify(state.components[index]?.props, null, 2));
+    console.log('New props:', JSON.stringify(props, null, 2));
+    
     const updated = [...state.components];
     updated[index] = { ...updated[index], props };
+    
+    console.log('Updated component:', JSON.stringify(updated[index], null, 2));
+    
     return { components: updated };
   }),
   

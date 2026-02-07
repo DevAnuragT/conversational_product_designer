@@ -190,29 +190,35 @@ export function generateLayoutVariations(
   }
 
   if (componentName === 'FeatureGrid') {
-    // Change grid columns
-    const currentCols = component.props.columns || 3;
+    // Change grid columns - ensure we're comparing strings since columns prop is a string
+    const currentCols = String(component.props.columns || '3');
+    
+    console.log('FeatureGrid current columns:', currentCols, 'type:', typeof currentCols);
     
     // 2-column variation
-    if (currentCols !== 2) {
-      variations.push({
+    if (currentCols !== '2') {
+      const variation = {
         id: `${component.id}-layout-0`,
         name: component.name,
-        props: { ...component.props, columns: 2 },
-        variationType: 'layout',
+        props: { ...component.props, columns: '2' },
+        variationType: 'layout' as const,
         description: '2-column layout',
-      });
+      };
+      console.log('Adding 2-column variation:', variation);
+      variations.push(variation);
     }
     
     // 4-column variation
-    if (currentCols !== 4) {
-      variations.push({
+    if (currentCols !== '4') {
+      const variation = {
         id: `${component.id}-layout-1`,
         name: component.name,
-        props: { ...component.props, columns: 4 },
-        variationType: 'layout',
+        props: { ...component.props, columns: '4' },
+        variationType: 'layout' as const,
         description: '4-column layout',
-      });
+      };
+      console.log('Adding 4-column variation:', variation);
+      variations.push(variation);
     }
   }
   

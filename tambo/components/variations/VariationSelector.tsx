@@ -67,10 +67,21 @@ export default function VariationSelector({
 
   const handleApplyVariation = () => {
     if (variations[selectedIndex]) {
-      console.log('Applying variation at index:', selectedIndex);
-      console.log('Variation:', variations[selectedIndex]);
-      console.log('Variation props:', JSON.stringify(variations[selectedIndex].props, null, 2));
-      onSelectVariation(variations[selectedIndex]);
+      const variation = variations[selectedIndex];
+      console.log('=== APPLYING VARIATION ===');
+      console.log('Selected index:', selectedIndex);
+      console.log('Variation ID:', variation.id);
+      console.log('Variation type:', variation.variationType);
+      console.log('Variation description:', variation.description);
+      console.log('Variation props:', JSON.stringify(variation.props, null, 2));
+      console.log('Component name:', variation.name);
+      
+      // Special logging for columns prop
+      if (variation.props.columns !== undefined) {
+        console.log('COLUMNS PROP:', variation.props.columns, 'type:', typeof variation.props.columns);
+      }
+      
+      onSelectVariation(variation);
       onClose();
     }
   };

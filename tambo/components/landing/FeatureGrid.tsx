@@ -133,6 +133,11 @@ export default function FeatureGrid({
   colorScheme = 'blue-purple',
   style = 'cards',
 }: FeatureGridProps) {
+  console.log('=== FEATUREGRID RENDER ===');
+  console.log('columns prop:', columns, 'type:', typeof columns);
+  console.log('colorScheme:', colorScheme);
+  console.log('All props:', { title, features: features.length, columns, colorScheme, style });
+  
   // Ensure features is always an array and has valid structure
   const safeFeatures = Array.isArray(features) ? features.filter(f => f && typeof f === 'object') : [];
   const displayFeatures = safeFeatures.length > 0 ? safeFeatures : [
