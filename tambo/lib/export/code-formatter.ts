@@ -1,12 +1,13 @@
 /**
  * Code Formatting Utilities
+ * Note: Prettier is loaded dynamically to avoid SSR issues
  */
-
-import prettier from 'prettier';
 
 export async function formatTypeScript(code: string): Promise<string> {
   try {
-    return await prettier.format(code, {
+    // Dynamic import to avoid SSR issues
+    const prettier = await import('prettier');
+    return await prettier.default.format(code, {
       parser: 'typescript',
       semi: true,
       singleQuote: true,
@@ -22,7 +23,8 @@ export async function formatTypeScript(code: string): Promise<string> {
 
 export async function formatHTML(code: string): Promise<string> {
   try {
-    return await prettier.format(code, {
+    const prettier = await import('prettier');
+    return await prettier.default.format(code, {
       parser: 'html',
       tabWidth: 2,
       printWidth: 80,
@@ -35,7 +37,8 @@ export async function formatHTML(code: string): Promise<string> {
 
 export async function formatJSON(code: string): Promise<string> {
   try {
-    return await prettier.format(code, {
+    const prettier = await import('prettier');
+    return await prettier.default.format(code, {
       parser: 'json',
       tabWidth: 2,
     });
