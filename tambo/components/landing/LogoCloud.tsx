@@ -11,6 +11,8 @@ export default function LogoCloud({
     { name: "Company 1", url: "" },
     { name: "Company 2", url: "" },
     { name: "Company 3", url: "" },
+    { name: "Company 4", url: "" },
+    { name: "Company 5", url: "" },
   ];
 
   const colorSchemes = {
@@ -18,16 +20,22 @@ export default function LogoCloud({
       bg: 'bg-white',
       titleColor: 'text-gray-900',
       logoFilter: 'grayscale opacity-60 hover:grayscale-0 hover:opacity-100',
+      placeholderBg: 'bg-gray-200',
+      placeholderText: 'text-gray-500',
     },
     'dark': {
       bg: 'bg-gray-900',
       titleColor: 'text-white',
       logoFilter: 'brightness-0 invert opacity-60 hover:opacity-100',
+      placeholderBg: 'bg-gray-700',
+      placeholderText: 'text-gray-300',
     },
     'gray': {
       bg: 'bg-gray-50',
       titleColor: 'text-gray-900',
       logoFilter: 'grayscale opacity-60 hover:grayscale-0 hover:opacity-100',
+      placeholderBg: 'bg-gray-300',
+      placeholderText: 'text-gray-600',
     },
   };
 
@@ -44,7 +52,7 @@ export default function LogoCloud({
           </div>
         )}
         
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 items-center">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 items-center">
           {displayLogos.map((logo: any, index: number) => (
             <div 
               key={index}
@@ -57,7 +65,7 @@ export default function LogoCloud({
                   className={`h-12 w-auto object-contain ${colors.logoFilter} transition-all duration-300`}
                 />
               ) : (
-                <div className="h-12 w-32 bg-gray-200 rounded flex items-center justify-center text-gray-500 text-sm font-medium">
+                <div className={`h-12 w-32 ${colors.placeholderBg} rounded flex items-center justify-center ${colors.placeholderText} text-sm font-medium`}>
                   {logo?.name || `Logo ${index + 1}`}
                 </div>
               )}

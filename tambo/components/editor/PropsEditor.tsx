@@ -105,6 +105,8 @@ export default function PropsEditor({ props, onChange }: PropsEditorProps) {
   };
   
   const renderInput = (path: string, value: any, onChange: (value: any) => void) => {
+    const isIconField = path.toLowerCase().includes('icon');
+    
     // Boolean
     if (typeof value === 'boolean') {
       return (
@@ -147,12 +149,19 @@ export default function PropsEditor({ props, onChange }: PropsEditorProps) {
     }
     
     return (
-      <input
-        type="text"
-        value={value || ''}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
-      />
+      <div>
+        <input
+          type="text"
+          value={value || ''}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+        />
+        {isIconField && (
+          <p className="text-xs text-gray-400 mt-1">
+            💡 Common icons: search, tag, package, users, star, heart, check, x, plus, minus, arrow-right, arrow-left
+          </p>
+        )}
+      </div>
     );
   };
   
