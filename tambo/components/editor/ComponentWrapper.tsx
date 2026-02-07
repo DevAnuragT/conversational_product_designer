@@ -9,11 +9,7 @@ interface ComponentWrapperProps {
   children: React.ReactNode;
   onEdit: (index: number) => void;
   onDelete: (index: number) => void;
-  onMoveUp: (index: number) => void;
-  onMoveDown: (index: number) => void;
   onVariations?: (index: number) => void;
-  isFirst: boolean;
-  isLast: boolean;
 }
 
 export default function ComponentWrapper({ 
@@ -22,11 +18,7 @@ export default function ComponentWrapper({
   children,
   onEdit, 
   onDelete, 
-  onMoveUp, 
-  onMoveDown,
   onVariations,
-  isFirst,
-  isLast
 }: ComponentWrapperProps) {
   const [isHovered, setIsHovered] = useState(false);
   
@@ -64,38 +56,6 @@ export default function ComponentWrapper({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
                 Variations
-              </button>
-            )}
-            
-            {!isFirst && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  console.log('Move up clicked:', { index, isFirst });
-                  onMoveUp(index);
-                }}
-                className="px-2 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors"
-                title="Move up"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                </svg>
-              </button>
-            )}
-            
-            {!isLast && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  console.log('Move down clicked:', { index, isLast });
-                  onMoveDown(index);
-                }}
-                className="px-2 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors"
-                title="Move down"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
               </button>
             )}
             

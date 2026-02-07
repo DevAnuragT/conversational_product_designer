@@ -448,11 +448,7 @@ export default function Home() {
                         index={index}
                         onEdit={startEditing}
                         onDelete={deleteComponent}
-                        onMoveUp={(i) => moveComponent(i, i - 1)}
-                        onMoveDown={(i) => moveComponent(i, i + 1)}
                         onVariations={handleShowVariations}
-                        isFirst={index === 0}
-                        isLast={index === components.length - 1}
                       >
                         <ErrorBoundary
                           fallback={
