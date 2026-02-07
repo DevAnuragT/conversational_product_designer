@@ -1,47 +1,24 @@
 /**
  * Code Formatting Utilities
- * Note: Prettier is loaded dynamically to avoid SSR issues
+ * Simple formatting without external dependencies
  */
 
 export async function formatTypeScript(code: string): Promise<string> {
-  try {
-    // Dynamic import to avoid SSR issues
-    const prettier = await import('prettier');
-    return await prettier.default.format(code, {
-      parser: 'typescript',
-      semi: true,
-      singleQuote: true,
-      trailingComma: 'es5',
-      tabWidth: 2,
-      printWidth: 80,
-    });
-  } catch (error) {
-    console.error('Error formatting TypeScript:', error);
-    return code;
-  }
+  // Return code as-is since Prettier causes browser issues
+  // The generated code is already well-formatted
+  return code;
 }
 
 export async function formatHTML(code: string): Promise<string> {
-  try {
-    const prettier = await import('prettier');
-    return await prettier.default.format(code, {
-      parser: 'html',
-      tabWidth: 2,
-      printWidth: 80,
-    });
-  } catch (error) {
-    console.error('Error formatting HTML:', error);
-    return code;
-  }
+  // Return code as-is
+  return code;
 }
 
 export async function formatJSON(code: string): Promise<string> {
+  // Use native JSON formatting
   try {
-    const prettier = await import('prettier');
-    return await prettier.default.format(code, {
-      parser: 'json',
-      tabWidth: 2,
-    });
+    const parsed = JSON.parse(code);
+    return JSON.stringify(parsed, null, 2);
   } catch (error) {
     console.error('Error formatting JSON:', error);
     return code;
