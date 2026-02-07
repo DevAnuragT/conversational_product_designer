@@ -54,13 +54,20 @@ export default function VariationSelector({
       variation.id
     );
     
-    onSelectVariation(variation);
+    // Don't apply immediately, just select
+    // onSelectVariation(variation);
+  };
+
+  const handleApplyVariation = () => {
+    if (variations[selectedIndex]) {
+      onSelectVariation(variations[selectedIndex]);
+      onClose();
+    }
   };
 
   const handleSurpriseMe = () => {
     const randomIndex = Math.floor(Math.random() * variations.length);
-    const randomVariation = variations[randomIndex];
-    handleSelectVariation(randomVariation, randomIndex);
+    setSelectedIndex(randomIndex);
   };
 
   const renderVariation = (variation: ComponentVariation) => {
@@ -213,12 +220,7 @@ export default function VariationSelector({
               Cancel
             </button>
             <button
-              onClick={() => {
-                if (variations[selectedIndex]) {
-                  handleSelectVariation(variations[selectedIndex], selectedIndex);
-                }
-                onClose();
-              }}
+              onClick={handleApplyVariation}
               disabled={variations.length === 0}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
             >
