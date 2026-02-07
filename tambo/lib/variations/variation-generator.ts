@@ -57,6 +57,38 @@ const colorSchemes = {
 };
 
 /**
+ * Deep clone and replace color values in props
+ */
+function replaceColorsInProps(props: any, colorMap: Record<string, string>): any {
+  if (typeof props !== 'object' || props === null) {
+    return props;
+  }
+
+  if (Array.isArray(props)) {
+    return props.map(item => replaceColorsInProps(item, colorMap));
+  }
+
+  const result: any = {};
+  for (const [key, value] of Object.entries(props)) {
+    if (typeof value === 'string') {
+      // Replace color values in strings
+      let newValue = value;
+      for (const [oldColor, newColor] of Object.entries(colorMap)) {
+        // Match Tailwind color classes like bg-blue-600, text-blue-500, etc.
+        const regex = new RegExp(`\\b(bg|text|border|ring|from|to|via)-${oldColor}-(\\d+)\\b`, 'g');
+        newValue = newValue.replace(regex, `$1-${newColor}-$2`);
+      }
+      result[key] = newValue;
+    } else if (typeof value === 'object') {
+      result[key] = replaceColorsInProps(value, colorMap);
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+
+/**
  * Generate color variations locally (without Tambo)
  */
 export function generateColorVariations(
@@ -72,27 +104,42 @@ export function generateColorVariations(
     .slice(0, count);
 
   selectedSchemes.forEach(([name, colors], index) => {
-    const variedProps = { ...component.props };
+    // Deep clone props
+    const variedProps = JSON.parse(JSON.stringify(component.props));
     
-    // Apply color scheme to props
-    if (variedProps.colorScheme) {
-      variedProps.colorScheme = name;
+    // Create color mapping from common colors to new scheme
+    const colorMap: Record<string, string> = {
+      'blue': colors.primary,
+      'indigo': colors.secondary,
+      'purple': colors.primary,
+      'green': colors.primary,
+      'red': colors.primary,
+      'orange': colors.primary,
+      'gray': colors.secondary,
+      'slate': colors.secondary,
+      'sky': colors.accent,
+      'cyan': colors.accent,
+      'teal': colors.accent,
+    };
+    
+    // Replace colors throughout the props
+    const updatedProps = replaceColorsInProps(variedProps, colorMap);
+    
+    // Also update specific color scheme props if they exist
+    if (updatedProps.colorScheme) {
+      updatedProps.colorScheme = name;
     }
-    
-    // Update button colors if present
-    if (variedProps.buttonColor) {
-      variedProps.buttonColor = colors.primary;
+    if (updatedProps.buttonColor) {
+      updatedProps.buttonColor = colors.primary;
     }
-    
-    // Update accent colors if present
-    if (variedProps.accentColor) {
-      variedProps.accentColor = colors.accent;
+    if (updatedProps.accentColor) {
+      updatedProps.accentColor = colors.accent;
     }
 
     variations.push({
       id: `${component.id}-color-${index}`,
       name: component.name,
-      props: variedProps,
+      props: updatedProps,
       variationType: 'color',
       description: `${name.charAt(0).toUpperCase() + name.slice(1)} color scheme`,
     });
@@ -114,10 +161,10 @@ export function generateLayoutVariations(
   // Layout variations based on component type
   if (componentName === 'HeroSection' || componentName === 'HeroSplit') {
     // Swap image position
-    const variation1 = {
-      ...component.props,
-      imagePosition: component.props.imagePosition === 'left' ? 'right' : 'left',
-    };
+    const variation1 = JSON.parse(JSON.stringify(component.props));
+    if (variation1.imagePosition) {
+      variation1.imagePosition = variation1.imagePosition === 'left' ? 'right' : 'left';
+    }
     
     variations.push({
       id: `${component.id}-layout-0`,
@@ -126,28 +173,55 @@ export function generateLayoutVariations(
       variationType: 'layout',
       description: 'Flipped image position',
     });
+    
+    // Center-aligned variation
+    const variation2 = JSON.parse(JSON.stringify(component.props));
+    if (variation2.alignment) {
+      variation2.alignment = 'center';
+    }
+    
+    variations.push({
+      id: `${component.id}-layout-1`,
+      name: component.name,
+      props: variation2,
+      variationType: 'layout',
+      description: 'Center-aligned layout',
+    });
   }
 
   if (componentName === 'FeatureGrid') {
     // Change grid columns
     const currentCols = component.props.columns || 3;
-    const newCols = currentCols === 3 ? 2 : 3;
     
-    variations.push({
-      id: `${component.id}-layout-0`,
-      name: component.name,
-      props: { ...component.props, columns: newCols },
-      variationType: 'layout',
-      description: `${newCols}-column layout`,
-    });
+    // 2-column variation
+    if (currentCols !== 2) {
+      variations.push({
+        id: `${component.id}-layout-0`,
+        name: component.name,
+        props: { ...component.props, columns: 2 },
+        variationType: 'layout',
+        description: '2-column layout',
+      });
+    }
+    
+    // 4-column variation
+    if (currentCols !== 4) {
+      variations.push({
+        id: `${component.id}-layout-1`,
+        name: component.name,
+        props: { ...component.props, columns: 4 },
+        variationType: 'layout',
+        description: '4-column layout',
+      });
+    }
   }
 
-  if (componentName === 'PricingTable') {
+  if (componentName === 'PricingTable' || componentName === 'PricingCompact') {
     // Change layout orientation
-    const variation1 = {
-      ...component.props,
-      layout: component.props.layout === 'horizontal' ? 'vertical' : 'horizontal',
-    };
+    const variation1 = JSON.parse(JSON.stringify(component.props));
+    if (variation1.layout) {
+      variation1.layout = variation1.layout === 'horizontal' ? 'vertical' : 'horizontal';
+    }
     
     variations.push({
       id: `${component.id}-layout-0`,
