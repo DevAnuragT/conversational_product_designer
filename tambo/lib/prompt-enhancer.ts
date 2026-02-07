@@ -24,6 +24,8 @@ Available components to compose:
 - Plus: LogoCloud, Newsletter, ContactForm, Team, VideoSection, ComparisonTable, Process
 
 You MUST compose 4-6 components together to create a complete landing page, not just a single component.
+
+ICON USAGE: For icon fields in FeatureGrid and Process components, use ONLY simple text keywords like: "star", "rocket", "chart", "shield", "speed", "support", "sparkle", "dumbbell", "utensils", "analytics". Do NOT use SVG code, emoji, or icon component names.
 `;
 
 const STYLE_GUIDANCE = `

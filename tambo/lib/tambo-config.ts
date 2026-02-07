@@ -55,7 +55,7 @@ export const componentRegistry = [
   },
   {
     name: "FeatureGrid", 
-    description: "Grid layout displaying multiple features with icons and descriptions",
+    description: "Grid layout displaying multiple features with icons and descriptions. Use simple icon keywords like 'star', 'rocket', 'chart', 'shield', 'speed', 'support' for the icon field.",
     component: FeatureGrid,
     propsSchema: featureGridSchema,
   },
@@ -151,7 +151,7 @@ export const componentRegistry = [
   },
   {
     name: "Process",
-    description: "Step-by-step process or workflow display",
+    description: "Step-by-step process or workflow display. Use simple icon keywords like 'star', 'rocket', 'chart' for the icon field.",
     component: Process,
     propsSchema: processSchema,
   },

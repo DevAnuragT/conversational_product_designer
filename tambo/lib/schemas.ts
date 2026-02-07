@@ -18,7 +18,7 @@ export type HeroSectionProps = z.infer<typeof heroSectionSchema>;
 export const featureSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
-  icon: z.string().optional(),
+  icon: z.string().optional().describe('Icon name as simple text keyword (e.g., "star", "rocket", "chart", "shield", "speed", "support", "sparkle", "dumbbell", "utensils", "analytics"). Do NOT use SVG code or emoji.'),
 });
 
 // Feature Grid Schema - with style props
@@ -229,7 +229,7 @@ export type ComparisonTableProps = z.infer<typeof comparisonTableSchema>;
 export const processStepSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
-  icon: z.string().optional(),
+  icon: z.string().optional().describe('Icon name as simple text keyword (e.g., "star", "rocket", "chart", "shield", "speed", "support", "sparkle"). Do NOT use SVG code or emoji.'),
 });
 
 export const processSchema = z.object({
