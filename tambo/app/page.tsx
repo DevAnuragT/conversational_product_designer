@@ -61,30 +61,6 @@ export default function Home() {
       console.log('=== THREAD MESSAGES DEBUG ===');
       console.log('Total messages:', thread.messages.length);
       
-      const lastMessage = thread.messages[thread.messages.length - 1];
-      if (lastMessage) {
-        console.log('=== LAST MESSAGE ===');
-        console.log('Role:', lastMessage.role);
-        console.log('Message keys:', Object.keys(lastMessage));
-        console.log('Full message:', lastMessage);
-        
-        if ((lastMessage as any).renderedComponent) {
-          console.log('=== RENDERED COMPONENT ===');
-          const renderedComp = (lastMessage as any).renderedComponent;
-          console.log('Rendered component:', renderedComp);
-          console.log('Component type:', renderedComp.type);
-          console.log('Component type.name:', renderedComp.type?.name);
-          console.log('Component type.displayName:', renderedComp.type?.displayName);
-          console.log('Component props:', renderedComp.props);
-          console.log('Component props keys:', Object.keys(renderedComp.props || {}));
-        }
-        
-        console.log('=== MESSAGE METADATA ===');
-        console.log('componentName:', (lastMessage as any).componentName);
-        console.log('componentProps:', (lastMessage as any).componentProps);
-        console.log('componentSchema:', (lastMessage as any).componentSchema);
-      }
-      
       const userMessages = thread.messages.filter(m => m.role === 'user');
       const lastUserMessageIndex = userMessages.length > 0 
         ? thread.messages.lastIndexOf(userMessages[userMessages.length - 1])
@@ -93,46 +69,28 @@ export default function Home() {
       if (lastUserMessageIndex >= 0) {
         const componentsFromThread = thread.messages
           .slice(lastUserMessageIndex + 1)
-          .filter(message => message.role === 'assistant' && message.renderedComponent)
+          .filter(message => {
+            // Check if message has component data
+            const hasComponent = message.role === 'assistant' && 
+                                (message as any).component &&
+                                (message as any).component.componentName;
+            return hasComponent;
+          })
           .map((message, index) => {
-            // Try to extract component name from the rendered component
-            const renderedComp = (message as any).renderedComponent;
-            let componentName = (message as any).componentName || 'Component';
+            // Extract from message.component
+            const componentData = (message as any).component;
+            const componentName = componentData.componentName || 'Component';
+            const props = componentData.props || {};
             
             console.log(`=== EXTRACTING COMPONENT ${index} ===`);
-            console.log('Initial componentName:', componentName);
-            
-            // Try to get the component name from the rendered component's type
-            if (renderedComp && renderedComp.type && renderedComp.type.name) {
-              componentName = renderedComp.type.name;
-              console.log('Got name from type.name:', componentName);
-            }
-            
-            // Try displayName
-            if (renderedComp && renderedComp.type && renderedComp.type.displayName) {
-              componentName = renderedComp.type.displayName;
-              console.log('Got name from type.displayName:', componentName);
-            }
-            
-            // Extract props
-            let props = (message as any).componentProps || {};
-            console.log('Props from componentProps:', props);
-            
-            // Try to get props from rendered component
-            if (renderedComp && renderedComp.props) {
-              console.log('Props from renderedComponent.props:', renderedComp.props);
-              // Merge or use rendered props if componentProps is empty
-              if (Object.keys(props).length === 0) {
-                props = renderedComp.props;
-                console.log('Using rendered props:', props);
-              }
-            }
+            console.log('Component name:', componentName);
+            console.log('Component props:', props);
             
             const component = {
               id: `comp-${Date.now()}-${index}`,
               name: componentName,
               props: props,
-              schema: (message as any).componentSchema,
+              schema: componentData.schema,
             };
             
             console.log('Final component:', component);
