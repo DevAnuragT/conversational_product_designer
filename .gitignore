@@ -65,6 +65,10 @@ jspm_packages/
 # Vercel
 .vercel
 
+# Exported landing pages (user downloads)
+landing-page/
+landing-page*.zip
+
 # Template development artifacts
 tambo-starter-template/node_modules/
 tambo-starter-template/.next/

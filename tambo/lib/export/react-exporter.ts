@@ -133,6 +133,9 @@ ${componentCode}
   
   private generateHeroCode(props: any): string {
     const colorScheme = props.colorScheme || 'blue';
+    const ctaText = props.ctaText || props.primaryButton?.text || 'Get Started';
+    const secondaryText = props.secondaryButton?.text;
+    
     return `  return (
     <section className="py-20 px-4 bg-gradient-to-br from-${colorScheme}-600 to-${colorScheme}-800">
       <div className="max-w-4xl mx-auto text-center">
@@ -144,9 +147,9 @@ ${componentCode}
         </p>
         <div className="flex gap-4 justify-center">
           <button className="px-8 py-3 bg-white text-${colorScheme}-600 rounded-lg font-semibold hover:bg-gray-100">
-            {props.primaryButton.text}
+            {props.ctaText || props.primaryButton?.text || 'Get Started'}
           </button>
-          {props.secondaryButton && (
+          {(props.secondaryButton?.text) && (
             <button className="px-8 py-3 border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10">
               {props.secondaryButton.text}
             </button>
@@ -222,23 +225,22 @@ ${componentCode}
   }
   
   private generateCTACode(props: any): string {
-    const bgColor = props.backgroundColor || 'primary';
     return `  return (
     <section className="py-16 px-4 bg-blue-600">
       <div className="max-w-4xl mx-auto text-center">
         <h2 className="text-4xl font-bold text-white mb-4">
-          {props.headline}
+          {props.headline || props.text}
         </h2>
-        {props.description && (
+        {(props.description || props.secondaryText) && (
           <p className="text-xl text-blue-100 mb-8">
-            {props.description}
+            {props.description || props.secondaryText}
           </p>
         )}
         <div className="flex gap-4 justify-center">
           <button className="px-8 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100">
-            {props.primaryButton.text}
+            {props.buttonText || props.primaryButton?.text || 'Get Started'}
           </button>
-          {props.secondaryButton && (
+          {props.secondaryButton?.text && (
             <button className="px-8 py-3 border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10">
               {props.secondaryButton.text}
             </button>
@@ -285,6 +287,7 @@ ${componentCode}
   }
   
   private generateFAQCode(props: any): string {
+    const questions = props.faqs || props.questions || [];
     return `  const [openIndex, setOpenIndex] = React.useState<number | null>(null);
   
   return (
@@ -296,7 +299,7 @@ ${componentCode}
           </h2>
         )}
         <div className="space-y-4">
-          {props.questions.map((item: any, index: number) => (
+          {(props.faqs || props.questions || []).map((item: any, index: number) => (
             <div key={index} className="border border-gray-200 rounded-lg">
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
