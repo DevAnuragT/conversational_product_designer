@@ -52,7 +52,7 @@ export class ReactExporter {
     config: ExportConfig
   ): Promise<ExportFile> {
     const componentName = `${comp.name}${index}`;
-    const propsInterface = this.generatePropsInterface(comp);
+    const propsInterface = this.generatePropsInterface(comp, componentName);
     const componentCode = this.generateComponentCode(comp, componentName, config);
     
     const code = `${config.includeComments ? this.generateFileHeader(comp) : ''}
@@ -72,9 +72,8 @@ ${componentCode}
     };
   }
   
-  private generatePropsInterface(comp: ComponentInstance): string {
+  private generatePropsInterface(comp: ComponentInstance, componentName: string): string {
     const props = comp.props;
-    const interfaceName = `${comp.name}Props`;
     
     // Generate interface from actual props
     const fields = Object.entries(props).map(([key, value]) => {
@@ -82,7 +81,7 @@ ${componentCode}
       return `  ${key}: ${type};`;
     }).join('\n');
     
-    return `interface ${interfaceName} {\n${fields}\n}`;
+    return `interface ${componentName}Props {\n${fields}\n}`;
   }
   
   private inferType(value: any): string {
