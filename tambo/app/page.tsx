@@ -67,12 +67,23 @@ export default function Home() {
         const componentsFromThread = thread.messages
           .slice(lastUserMessageIndex + 1)
           .filter(message => message.role === 'assistant' && message.renderedComponent)
-          .map((message, index) => ({
-            id: `comp-${Date.now()}-${index}`,
-            name: (message as any).componentName || 'Component',
-            props: (message as any).componentProps || {},
-            schema: (message as any).componentSchema,
-          }));
+          .map((message, index) => {
+            // Try to extract component name from the rendered component
+            const renderedComp = (message as any).renderedComponent;
+            let componentName = (message as any).componentName || 'Component';
+            
+            // Try to get the component name from the rendered component's type
+            if (renderedComp && renderedComp.type && renderedComp.type.name) {
+              componentName = renderedComp.type.name;
+            }
+            
+            return {
+              id: `comp-${Date.now()}-${index}`,
+              name: componentName,
+              props: (message as any).componentProps || {},
+              schema: (message as any).componentSchema,
+            };
+          });
         
         if (componentsFromThread.length > 0) {
           setComponents(componentsFromThread);
