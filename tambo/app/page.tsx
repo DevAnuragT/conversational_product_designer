@@ -27,7 +27,7 @@ export default function Home() {
   const [showTemplateGallery, setShowTemplateGallery] = useState(false);
   const [showVariationSelector, setShowVariationSelector] = useState(false);
   const [variationComponentIndex, setVariationComponentIndex] = useState<number | null>(null);
-  const { sendThreadMessage, generationStage, isIdle, thread } = useTamboThread();
+  const { sendThreadMessage, generationStage, isIdle, thread, startNewThread } = useTamboThread();
   
   const {
     currentProject,
@@ -86,6 +86,7 @@ export default function Home() {
           });
         
         if (componentsFromThread.length > 0) {
+          console.log('Extracted components from thread:', componentsFromThread);
           setComponents(componentsFromThread);
           
           // Create new project if none exists
@@ -95,7 +96,7 @@ export default function Home() {
         }
       }
     }
-  }, [thread]);
+  }, [thread?.messages?.length]); // Only re-run when message count changes
   
   // Auto-save when components change
   useEffect(() => {
@@ -108,6 +109,10 @@ export default function Home() {
     if (!prompt.trim()) return;
     
     try {
+      // Clear existing components before generating new ones
+      console.log('Clearing existing components before new generation');
+      setComponents([]);
+      
       // Enhance prompt if enabled
       const finalPrompt = enhancePrompts ? enhancePrompt(prompt) : prompt;
       
@@ -178,6 +183,15 @@ export default function Home() {
       updateComponent(variationComponentIndex, variation.props);
     }
   };
+  
+  const handleNewProject = async () => {
+    clearDesign();
+    // Start a new thread to avoid reusing old conversation
+    if (startNewThread) {
+      await startNewThread();
+      console.log('Started new thread for new project');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -185,7 +199,7 @@ export default function Home() {
       <ProjectsSidebar
         currentProjectId={currentProject?.id}
         onSelectProject={loadFromStorage}
-        onNewProject={clearDesign}
+        onNewProject={handleNewProject}
       />
       
       {/* Header */}
@@ -413,9 +427,14 @@ export default function Home() {
               </h2>
               {thread?.messages && thread.messages.some(m => m.role === 'assistant' && m.renderedComponent) && !isLoading && components.length > 0 && (
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     if (confirm('Clear current design?')) {
                       clearDesign();
+                      // Start a new thread to avoid reusing old conversation
+                      if (startNewThread) {
+                        await startNewThread();
+                        console.log('Started new thread');
+                      }
                     }
                   }}
                   className="text-sm text-red-400 hover:text-red-300 underline"
