@@ -91,16 +91,17 @@ ${body}
     return `<section class="py-20 px-4 bg-gradient-to-br from-${colorScheme}-600 to-${colorScheme}-800">
   <div class="max-w-4xl mx-auto text-center">
     <h1 class="text-5xl font-bold text-white mb-6">
-      ${this.escapeHTML(props.headline)}
+      ${this.escapeHTML(props.headline || 'Welcome')}
     </h1>
     <p class="text-xl text-${colorScheme}-100 mb-8">
-      ${this.escapeHTML(props.subheadline)}
+      ${this.escapeHTML(props.subheadline || '')}
     </p>
     <div class="flex gap-4 justify-center">
+      ${props.ctaText || props.primaryButton?.text ? `
       <button class="px-8 py-3 bg-white text-${colorScheme}-600 rounded-lg font-semibold hover:bg-gray-100">
-        ${this.escapeHTML(props.primaryButton.text)}
-      </button>
-      ${props.secondaryButton ? `
+        ${this.escapeHTML(props.ctaText || props.primaryButton?.text || 'Get Started')}
+      </button>` : ''}
+      ${props.secondaryButton?.text ? `
       <button class="px-8 py-3 border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10">
         ${this.escapeHTML(props.secondaryButton.text)}
       </button>` : ''}
@@ -110,11 +111,12 @@ ${body}
   }
   
   private featuresToHTML(props: any): string {
-    const featuresHTML = props.features.map((feature: any) => `
+    const features = props.features || [];
+    const featuresHTML = features.map((feature: any) => `
     <div class="text-center">
       ${feature.icon ? `<div class="text-4xl mb-4">${feature.icon}</div>` : ''}
-      <h3 class="text-xl font-semibold mb-2">${this.escapeHTML(feature.title)}</h3>
-      <p class="text-gray-600">${this.escapeHTML(feature.description)}</p>
+      <h3 class="text-xl font-semibold mb-2">${this.escapeHTML(feature.title || 'Feature')}</h3>
+      <p class="text-gray-600">${this.escapeHTML(feature.description || '')}</p>
     </div>`).join('');
     
     return `<section class="py-16 px-4">
@@ -128,20 +130,22 @@ ${body}
   }
   
   private pricingToHTML(props: any): string {
-    const tiersHTML = props.tiers.map((tier: any) => `
+    const tiers = props.tiers || props.plans || [];
+    const tiersHTML = tiers.map((tier: any) => `
     <div class="p-8 bg-white rounded-xl shadow-lg ${tier.highlighted ? 'ring-2 ring-blue-600' : ''}">
-      <h3 class="text-2xl font-bold mb-2">${this.escapeHTML(tier.name)}</h3>
+      <h3 class="text-2xl font-bold mb-2">${this.escapeHTML(tier.name || 'Plan')}</h3>
       <div class="text-4xl font-bold mb-4">
-        ${this.escapeHTML(tier.price)}
+        ${this.escapeHTML(tier.price || '$0')}
         ${tier.period ? `<span class="text-lg text-gray-600">/${this.escapeHTML(tier.period)}</span>` : ''}
       </div>
+      ${tier.features && tier.features.length > 0 ? `
       <ul class="space-y-3 mb-8">
         ${tier.features.map((f: string) => `
         <li class="flex items-center">
           <span class="mr-2">✓</span>
           ${this.escapeHTML(f)}
         </li>`).join('')}
-      </ul>
+      </ul>` : ''}
       <button class="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
         ${this.escapeHTML(tier.ctaText || 'Get Started')}
       </button>
@@ -150,7 +154,7 @@ ${body}
     return `<section class="py-16 px-4 bg-gray-50">
   <div class="max-w-6xl mx-auto">
     ${props.title ? `<h2 class="text-3xl font-bold text-center mb-12">${this.escapeHTML(props.title)}</h2>` : ''}
-    <div class="grid md:grid-cols-${props.tiers.length} gap-8">
+    <div class="grid md:grid-cols-${tiers.length || 3} gap-8">
       ${tiersHTML}
     </div>
   </div>
@@ -161,17 +165,18 @@ ${body}
     return `<section class="py-16 px-4 bg-blue-600">
   <div class="max-w-4xl mx-auto text-center">
     <h2 class="text-4xl font-bold text-white mb-4">
-      ${this.escapeHTML(props.headline)}
+      ${this.escapeHTML(props.headline || props.text || 'Get Started Today')}
     </h2>
-    ${props.description ? `
+    ${props.description || props.secondaryText ? `
     <p class="text-xl text-blue-100 mb-8">
-      ${this.escapeHTML(props.description)}
+      ${this.escapeHTML(props.description || props.secondaryText || '')}
     </p>` : ''}
     <div class="flex gap-4 justify-center">
+      ${props.buttonText || props.primaryButton?.text ? `
       <button class="px-8 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100">
-        ${this.escapeHTML(props.primaryButton.text)}
-      </button>
-      ${props.secondaryButton ? `
+        ${this.escapeHTML(props.buttonText || props.primaryButton?.text || 'Get Started')}
+      </button>` : ''}
+      ${props.secondaryButton?.text ? `
       <button class="px-8 py-3 border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10">
         ${this.escapeHTML(props.secondaryButton.text)}
       </button>` : ''}
@@ -181,16 +186,17 @@ ${body}
   }
   
   private testimonialsToHTML(props: any): string {
-    const testimonialsHTML = props.testimonials.map((t: any) => `
+    const testimonials = props.testimonials || [];
+    const testimonialsHTML = testimonials.map((t: any) => `
     <div class="p-6 bg-white rounded-xl shadow-lg">
       <div class="flex items-center mb-4">
-        ${t.avatar ? `<img src="${t.avatar}" alt="${this.escapeHTML(t.name)}" class="w-12 h-12 rounded-full mr-4" />` : ''}
+        ${t.avatar ? `<img src="${t.avatar}" alt="${this.escapeHTML(t.name || 'User')}" class="w-12 h-12 rounded-full mr-4" />` : ''}
         <div>
-          <div class="font-semibold">${this.escapeHTML(t.name)}</div>
-          <div class="text-sm text-gray-600">${this.escapeHTML(t.role)}</div>
+          <div class="font-semibold">${this.escapeHTML(t.name || 'Anonymous')}</div>
+          <div class="text-sm text-gray-600">${this.escapeHTML(t.role || '')}</div>
         </div>
       </div>
-      <p class="text-gray-700 mb-4">${this.escapeHTML(t.content)}</p>
+      <p class="text-gray-700 mb-4">${this.escapeHTML(t.content || '')}</p>
       ${t.rating ? `<div class="text-yellow-400">${'★'.repeat(t.rating)}</div>` : ''}
     </div>`).join('');
     
@@ -205,13 +211,14 @@ ${body}
   }
   
   private faqToHTML(props: any): string {
-    const questionsHTML = props.questions.map((q: any, i: number) => `
+    const questions = props.faqs || props.questions || [];
+    const questionsHTML = questions.map((q: any, i: number) => `
     <details class="border border-gray-200 rounded-lg">
       <summary class="p-4 font-semibold cursor-pointer">
-        ${this.escapeHTML(q.question)}
+        ${this.escapeHTML(q.question || 'Question')}
       </summary>
       <div class="p-4 pt-0 text-gray-600">
-        ${this.escapeHTML(q.answer)}
+        ${this.escapeHTML(q.answer || '')}
       </div>
     </details>`).join('');
     
@@ -226,19 +233,20 @@ ${body}
   }
   
   private statsToHTML(props: any): string {
-    const statsHTML = props.stats.map((stat: any) => `
+    const stats = props.stats || [];
+    const statsHTML = stats.map((stat: any) => `
     <div class="text-center">
       <div class="text-5xl font-bold text-blue-600 mb-2">
-        ${this.escapeHTML(stat.value)}
+        ${this.escapeHTML(stat.value || '0')}
       </div>
-      <div class="text-xl font-semibold mb-1">${this.escapeHTML(stat.label)}</div>
+      <div class="text-xl font-semibold mb-1">${this.escapeHTML(stat.label || '')}</div>
       ${stat.description ? `<div class="text-gray-600">${this.escapeHTML(stat.description)}</div>` : ''}
     </div>`).join('');
     
     return `<section class="py-16 px-4 bg-gray-50">
   <div class="max-w-6xl mx-auto">
     ${props.title ? `<h2 class="text-3xl font-bold text-center mb-12">${this.escapeHTML(props.title)}</h2>` : ''}
-    <div class="grid md:grid-cols-${props.stats.length} gap-8">
+    <div class="grid md:grid-cols-${stats.length || 3} gap-8">
       ${statsHTML}
     </div>
   </div>
