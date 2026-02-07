@@ -215,6 +215,29 @@ export function generateLayoutVariations(
       });
     }
   }
+  
+  if (componentName === 'Process') {
+    // Change layout orientation
+    const currentLayout = component.props.layout || 'vertical';
+    
+    if (currentLayout === 'vertical') {
+      variations.push({
+        id: `${component.id}-layout-0`,
+        name: component.name,
+        props: { ...component.props, layout: 'horizontal' },
+        variationType: 'layout',
+        description: 'Horizontal layout',
+      });
+    } else {
+      variations.push({
+        id: `${component.id}-layout-0`,
+        name: component.name,
+        props: { ...component.props, layout: 'vertical' },
+        variationType: 'layout',
+        description: 'Vertical layout',
+      });
+    }
+  }
 
   if (componentName === 'PricingTable' || componentName === 'PricingCompact') {
     // Change layout orientation

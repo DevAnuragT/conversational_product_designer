@@ -193,8 +193,19 @@ export default function Home() {
   };
   
   const handleSelectVariation = (variation: ComponentVariation) => {
+    console.log('=== APPLYING VARIATION ===');
+    console.log('Variation component index:', variationComponentIndex);
+    console.log('Current component:', components[variationComponentIndex!]);
+    console.log('Variation to apply:', variation);
+    console.log('Variation props:', variation.props);
+    console.log('Props diff:', {
+      before: components[variationComponentIndex!]?.props,
+      after: variation.props
+    });
+    
     if (variationComponentIndex !== null) {
       updateComponent(variationComponentIndex, variation.props);
+      console.log('Component updated, new components:', components);
     }
   };
   
