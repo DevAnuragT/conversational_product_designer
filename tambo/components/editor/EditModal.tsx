@@ -15,6 +15,11 @@ export default function EditModal({ component, onSave, onCancel }: EditModalProp
   const [props, setProps] = useState(component.props);
   const [hasChanges, setHasChanges] = useState(false);
   
+  // Debug logging
+  console.log('EditModal - component:', component);
+  console.log('EditModal - props:', props);
+  console.log('EditModal - props keys:', Object.keys(props || {}));
+  
   useEffect(() => {
     setProps(component.props);
     setHasChanges(false);
@@ -78,10 +83,21 @@ export default function EditModal({ component, onSave, onCancel }: EditModalProp
           </div>
           
           <div className="mb-6">
-            <PropsEditor 
-              props={props}
-              onChange={handleFieldChange}
-            />
+            {Object.keys(props || {}).length === 0 ? (
+              <div className="p-6 bg-yellow-900/20 border border-yellow-600/30 rounded-lg">
+                <p className="text-yellow-300 text-sm">
+                  ⚠️ This component has no editable properties.
+                </p>
+                <p className="text-yellow-400/70 text-xs mt-2">
+                  Component: {component.name}
+                </p>
+              </div>
+            ) : (
+              <PropsEditor 
+                props={props}
+                onChange={handleFieldChange}
+              />
+            )}
           </div>
           
           <div className="flex gap-4 sticky bottom-0 bg-gray-800 pt-4 border-t border-gray-700">

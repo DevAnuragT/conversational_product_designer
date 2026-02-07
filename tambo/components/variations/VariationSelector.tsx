@@ -28,10 +28,13 @@ export default function VariationSelector({
 
   useEffect(() => {
     generateVariations();
+    setSelectedIndex(0); // Reset selection when component changes
   }, [component]);
 
   const generateVariations = () => {
     setIsGenerating(true);
+    
+    console.log('Generating variations for component:', component);
     
     // Generate variations locally
     const newVariations = generateAllVariations(component, {
@@ -40,7 +43,11 @@ export default function VariationSelector({
       contentCount: 2,
     });
     
+    console.log('Generated variations:', newVariations);
+    console.log('Variation count:', newVariations.length);
+    
     setVariations(newVariations);
+    setSelectedIndex(0); // Reset to first variation
     setIsGenerating(false);
   };
 
@@ -60,6 +67,9 @@ export default function VariationSelector({
 
   const handleApplyVariation = () => {
     if (variations[selectedIndex]) {
+      console.log('Applying variation at index:', selectedIndex);
+      console.log('Variation:', variations[selectedIndex]);
+      console.log('Variation props:', JSON.stringify(variations[selectedIndex].props, null, 2));
       onSelectVariation(variations[selectedIndex]);
       onClose();
     }
