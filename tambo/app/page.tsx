@@ -433,11 +433,20 @@ export default function Home() {
                       .filter(m => m.role === 'assistant' && m.renderedComponent) || [];
                     let renderedComponent = threadComponents[index]?.renderedComponent;
                     
-                    // If no thread component (e.g., from template), render using component registry
+                    // If no thread component (e.g., from template or loaded project), render using component registry
                     if (!renderedComponent) {
                       const ComponentClass = componentRegistry.find(c => c.name === component.name)?.component;
                       if (ComponentClass) {
                         renderedComponent = <ComponentClass {...component.props} />;
+                      } else {
+                        console.warn('Component not found in registry:', component.name);
+                        renderedComponent = (
+                          <div className="p-6 bg-red-50 border border-red-200 rounded-lg m-4">
+                            <p className="text-red-800">
+                              ⚠️ Component "{component.name}" not found in registry
+                            </p>
+                          </div>
+                        );
                       }
                     }
                     
