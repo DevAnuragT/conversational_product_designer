@@ -29,6 +29,7 @@ export default function Home() {
   const [variationComponentIndex, setVariationComponentIndex] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [lastPrompt, setLastPrompt] = useState<string>('');
+  const [manualLoading, setManualLoading] = useState(false);
   const { sendThreadMessage, generationStage, isIdle, thread, startNewThread } = useTamboThread();
   
   const {
@@ -48,7 +49,7 @@ export default function Home() {
     clearDesign,
   } = useDesignStore();
 
-  const isLoading = !isIdle;
+  const isLoading = manualLoading || !isIdle;
   const error = errorMessage || (generationStage === 'ERROR' ? 'An error occurred while generating' : null);
 
   // Analyze current prompt
@@ -105,6 +106,12 @@ export default function Home() {
           console.log('Components:', componentsFromThread);
           setComponents(componentsFromThread);
           
+          // Force clear loading state after a short delay to handle stuck streams
+          setTimeout(() => {
+            console.log('Force clearing loading state');
+            setManualLoading(false);
+          }, 2000);
+          
           // Create new project if none exists
           if (!currentProject) {
             createNewProject(prompt);
@@ -127,6 +134,7 @@ export default function Home() {
     try {
       setErrorMessage(null); // Clear any previous errors
       setLastPrompt(prompt); // Save for retry
+      setManualLoading(true); // Set manual loading state
       
       // Clear existing components before generating new ones
       console.log('Clearing existing components before new generation');
@@ -142,6 +150,7 @@ export default function Home() {
       // Don't clear the input - keep it for reference and potential re-generation
     } catch (err) {
       console.error('Error generating UI:', err);
+      setManualLoading(false); // Clear loading on error
       
       // Set user-friendly error message
       if (err instanceof Error) {
