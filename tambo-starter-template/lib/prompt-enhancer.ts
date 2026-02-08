@@ -193,7 +193,6 @@ export function analyzePrompt(prompt: string): {
   isAppUIRequest?: boolean;
   warning?: string;
 } {
-  const lowerPrompt = prompt.toLowerCase();
   let score = 0;
   const suggestions: string[] = [];
   const missingElements: string[] = [];

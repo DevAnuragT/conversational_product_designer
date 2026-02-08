@@ -50,7 +50,7 @@ export default function HeroSection({
   colorScheme = 'blue-purple',
   layout = 'centered',
 }: HeroSectionProps) {
-  const colors = colorSchemes[colorScheme] || colorSchemes['blue-purple'];
+  const colors = colorSchemes[colorScheme as keyof typeof colorSchemes] || colorSchemes['blue-purple'];
   
   const layoutClasses = {
     'centered': 'text-center mx-auto',
@@ -79,7 +79,7 @@ export default function HeroSection({
         <div className="absolute inset-0 bg-black bg-opacity-50" />
       )}
       
-      <div className={`relative max-w-5xl ${layoutClasses[layout]}`}>
+      <div className={`relative max-w-5xl ${layoutClasses[layout as keyof typeof layoutClasses]}`}>
         <h1 className={`text-5xl sm:text-6xl lg:text-7xl font-extrabold mb-8 leading-tight ${colors.text}`}>
           {colorScheme !== 'minimal' ? (
             <span className="bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">

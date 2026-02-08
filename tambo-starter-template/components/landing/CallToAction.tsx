@@ -94,7 +94,7 @@ export default function CallToAction({
   colorScheme = 'blue-purple',
   layout = 'centered',
 }: CallToActionProps) {
-  const colors = colorSchemes[colorScheme] || colorSchemes['blue-purple'];
+  const colors = colorSchemes[colorScheme as keyof typeof colorSchemes] || colorSchemes['blue-purple'];
   
   const layoutClasses = {
     'centered': 'text-center mx-auto',
@@ -119,7 +119,7 @@ export default function CallToAction({
         </div>
       )}
       
-      <div className={`relative ${containerClasses[layout]} ${layoutClasses[layout]}`}>
+      <div className={`relative ${containerClasses[layout as keyof typeof containerClasses]} ${layoutClasses[layout as keyof typeof layoutClasses]}`}>
         <div className={layout === 'split' ? 'lg:col-span-1' : ''}>
           <h2 className={`text-5xl sm:text-6xl lg:text-7xl font-extrabold ${colors.text} mb-8 leading-tight`}>
             {colorScheme !== 'light' ? (

@@ -113,7 +113,7 @@ export default function Home() {
                             <li>App frameworks: React Native, Flutter</li>
                           </ul>
                           <p className="mt-3"><strong>Want a landing page instead?</strong> Try:</p>
-                          <p className="italic">"Create a landing page for TimeTracker app with hero section, feature highlights, pricing plans, and download CTA"</p>
+                          <p className="italic">&ldquo;Create a landing page for TimeTracker app with hero section, feature highlights, pricing plans, and download CTA&rdquo;</p>
                         </div>
                       </div>
                     </div>

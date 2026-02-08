@@ -141,7 +141,7 @@ export default function FeatureGrid({
     { title: "Easy to Use", description: "Simple and intuitive interface", icon: "sparkle" }
   ];
   
-  const colors = colorSchemes[colorScheme] || colorSchemes['blue-purple'];
+  const colors = colorSchemes[colorScheme as keyof typeof colorSchemes] || colorSchemes['blue-purple'];
   
   const getGridCols = () => {
     switch (columns) {
@@ -172,10 +172,10 @@ export default function FeatureGrid({
         )}
         
         <div className={`grid ${getGridCols()} gap-10`}>
-          {displayFeatures.map((feature: any, index: number) => (
+          {displayFeatures.map((feature: { title?: string; description?: string; icon?: string }, index: number) => (
             <div 
               key={index}
-              className={`group relative ${styleClasses[style]} transition-all duration-300 hover:-translate-y-2`}
+              className={`group relative ${styleClasses[style as keyof typeof styleClasses]} transition-all duration-300 hover:-translate-y-2`}
             >
               {/* Background gradient on hover */}
               <div className={`absolute inset-0 bg-gradient-to-br ${colors.hoverBg} rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>

@@ -72,7 +72,7 @@ export default function PricingTable({
     }
   ];
   
-  const colors = colorSchemes[colorScheme] || colorSchemes['blue-purple'];
+  const colors = colorSchemes[colorScheme as keyof typeof colorSchemes] || colorSchemes['blue-purple'];
   
   const layoutClasses = {
     'cards': 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8',
@@ -94,8 +94,8 @@ export default function PricingTable({
           </div>
         )}
         
-        <div className={`${layoutClasses[layout]} max-w-6xl mx-auto`}>
-          {displayTiers.map((tier: any, index: number) => (
+        <div className={`${layoutClasses[layout as keyof typeof layoutClasses]} max-w-6xl mx-auto`}>
+          {displayTiers.map((tier: { name?: string; price?: string; period?: string; features?: string[]; highlighted?: boolean; ctaText?: string }, index: number) => (
             <div 
               key={index}
               className={`relative bg-white rounded-3xl shadow-2xl p-8 transform transition-all duration-300 hover:scale-105 ${
@@ -130,7 +130,7 @@ export default function PricingTable({
               </div>
               
               <ul className="space-y-4 mb-8">
-                {(Array.isArray(tier?.features) ? tier.features : ["Feature included"]).map((feature: any, featureIndex: number) => (
+                {(Array.isArray(tier?.features) ? tier.features : ["Feature included"]).map((feature: string, featureIndex: number) => (
                   <li key={featureIndex} className="flex items-start">
                     <div className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
                       <svg 
