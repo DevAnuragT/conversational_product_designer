@@ -27,6 +27,8 @@ export default function Home() {
   const [showTemplateGallery, setShowTemplateGallery] = useState(false);
   const [showVariationSelector, setShowVariationSelector] = useState(false);
   const [variationComponentIndex, setVariationComponentIndex] = useState<number | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [lastPrompt, setLastPrompt] = useState<string>('');
   const { sendThreadMessage, generationStage, isIdle, thread, startNewThread } = useTamboThread();
   
   const {
@@ -47,7 +49,7 @@ export default function Home() {
   } = useDesignStore();
 
   const isLoading = !isIdle;
-  const error = generationStage === 'ERROR' ? 'An error occurred while generating' : null;
+  const error = errorMessage || (generationStage === 'ERROR' ? 'An error occurred while generating' : null);
 
   // Analyze current prompt
   const analysis = prompt.trim() ? analyzePrompt(prompt) : null;
@@ -123,6 +125,9 @@ export default function Home() {
     if (!prompt.trim()) return;
     
     try {
+      setErrorMessage(null); // Clear any previous errors
+      setLastPrompt(prompt); // Save for retry
+      
       // Clear existing components before generating new ones
       console.log('Clearing existing components before new generation');
       setComponents([]);
@@ -137,11 +142,29 @@ export default function Home() {
       // Don't clear the input - keep it for reference and potential re-generation
     } catch (err) {
       console.error('Error generating UI:', err);
-      // Additional error logging for debugging
+      
+      // Set user-friendly error message
       if (err instanceof Error) {
         console.error('Error details:', err.message);
         console.error('Error stack:', err.stack);
+        
+        if (err.message.includes('network')) {
+          setErrorMessage('Network error: Connection to Tambo API was interrupted. Please check your internet connection and try again.');
+        } else if (err.message.includes('timeout')) {
+          setErrorMessage('Request timed out. The AI is taking longer than expected. Please try again.');
+        } else {
+          setErrorMessage(`Error: ${err.message}. Please try again.`);
+        }
+      } else {
+        setErrorMessage('An unexpected error occurred. Please try again.');
       }
+    }
+  };
+  
+  const handleRetry = () => {
+    if (lastPrompt) {
+      setPrompt(lastPrompt);
+      handleGenerate();
     }
   };
 
@@ -439,7 +462,19 @@ export default function Home() {
 
             {error && (
               <div className="mt-4 p-4 bg-red-900/50 border border-red-700 rounded-lg">
-                <p className="text-sm text-red-300">{error}</p>
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <p className="text-sm text-red-300">{error}</p>
+                  </div>
+                  {lastPrompt && (
+                    <button
+                      onClick={handleRetry}
+                      className="ml-4 px-3 py-1 bg-red-700 hover:bg-red-600 text-white text-sm rounded transition-colors duration-200"
+                    >
+                      Retry
+                    </button>
+                  )}
+                </div>
               </div>
             )}
           </div>
